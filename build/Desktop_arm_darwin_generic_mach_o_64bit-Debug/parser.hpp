@@ -54,7 +54,50 @@
      P_OPEN = 270,
      P_CLOSE = 271,
      H1_OPEN = 272,
-     H1_CLOSE = 273
+     H1_CLOSE = 273,
+     H2_OPEN = 274,
+     H2_CLOSE = 275,
+     H3_OPEN = 276,
+     H3_CLOSE = 277,
+     H4_OPEN = 278,
+     H4_CLOSE = 279,
+     H5_OPEN = 280,
+     H5_CLOSE = 281,
+     NAV_OPEN = 282,
+     NAV_CLOSE = 283,
+     UL_OPEN = 284,
+     UL_CLOSE = 285,
+     LI_OPEN = 286,
+     LI_CLOSE = 287,
+     HEADER_OPEN = 288,
+     HEADER_CLOSE = 289,
+     FOOTER_OPEN = 290,
+     FOOTER_CLOSE = 291,
+     SECTION_OPEN = 292,
+     SECTION_CLOSE = 293,
+     ARTICLE_OPEN = 294,
+     ARTICLE_CLOSE = 295,
+     ASIDE_OPEN = 296,
+     ASIDE_CLOSE = 297,
+     OL_OPEN = 298,
+     OL_CLOSE = 299,
+     A_OPEN = 300,
+     A_CLOSE = 301,
+     STRONG_OPEN = 302,
+     STRONG_CLOSE = 303,
+     EM_OPEN = 304,
+     EM_CLOSE = 305,
+     U_OPEN = 306,
+     U_CLOSE = 307,
+     SMALL_OPEN = 308,
+     SMALL_CLOSE = 309,
+     PRE_OPEN = 310,
+     PRE_CLOSE = 311,
+     BLOCKQUOTE_OPEN = 312,
+     BLOCKQUOTE_CLOSE = 313,
+     CODE_OPEN = 314,
+     CODE_CLOSE = 315,
+     IMG_TAG = 316
    };
 #endif
 /* Tokens.  */
@@ -74,6 +117,49 @@
 #define P_CLOSE 271
 #define H1_OPEN 272
 #define H1_CLOSE 273
+#define H2_OPEN 274
+#define H2_CLOSE 275
+#define H3_OPEN 276
+#define H3_CLOSE 277
+#define H4_OPEN 278
+#define H4_CLOSE 279
+#define H5_OPEN 280
+#define H5_CLOSE 281
+#define NAV_OPEN 282
+#define NAV_CLOSE 283
+#define UL_OPEN 284
+#define UL_CLOSE 285
+#define LI_OPEN 286
+#define LI_CLOSE 287
+#define HEADER_OPEN 288
+#define HEADER_CLOSE 289
+#define FOOTER_OPEN 290
+#define FOOTER_CLOSE 291
+#define SECTION_OPEN 292
+#define SECTION_CLOSE 293
+#define ARTICLE_OPEN 294
+#define ARTICLE_CLOSE 295
+#define ASIDE_OPEN 296
+#define ASIDE_CLOSE 297
+#define OL_OPEN 298
+#define OL_CLOSE 299
+#define A_OPEN 300
+#define A_CLOSE 301
+#define STRONG_OPEN 302
+#define STRONG_CLOSE 303
+#define EM_OPEN 304
+#define EM_CLOSE 305
+#define U_OPEN 306
+#define U_CLOSE 307
+#define SMALL_OPEN 308
+#define SMALL_CLOSE 309
+#define PRE_OPEN 310
+#define PRE_CLOSE 311
+#define BLOCKQUOTE_OPEN 312
+#define BLOCKQUOTE_CLOSE 313
+#define CODE_OPEN 314
+#define CODE_CLOSE 315
+#define IMG_TAG 316
 
 
 
@@ -87,7 +173,7 @@ typedef union YYSTYPE
     char* text;
 }
 /* Line 1529 of yacc.c.  */
-#line 91 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/parser.hpp"
+#line 177 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/parser.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

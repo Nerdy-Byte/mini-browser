@@ -69,7 +69,50 @@ extern int yydebug;
     P_OPEN = 270,                  /* P_OPEN  */
     P_CLOSE = 271,                 /* P_CLOSE  */
     H1_OPEN = 272,                 /* H1_OPEN  */
-    H1_CLOSE = 273                 /* H1_CLOSE  */
+    H1_CLOSE = 273,                /* H1_CLOSE  */
+    H2_OPEN = 274,                 /* H2_OPEN  */
+    H2_CLOSE = 275,                /* H2_CLOSE  */
+    H3_OPEN = 276,                 /* H3_OPEN  */
+    H3_CLOSE = 277,                /* H3_CLOSE  */
+    H4_OPEN = 278,                 /* H4_OPEN  */
+    H4_CLOSE = 279,                /* H4_CLOSE  */
+    H5_OPEN = 280,                 /* H5_OPEN  */
+    H5_CLOSE = 281,                /* H5_CLOSE  */
+    NAV_OPEN = 282,                /* NAV_OPEN  */
+    NAV_CLOSE = 283,               /* NAV_CLOSE  */
+    UL_OPEN = 284,                 /* UL_OPEN  */
+    UL_CLOSE = 285,                /* UL_CLOSE  */
+    LI_OPEN = 286,                 /* LI_OPEN  */
+    LI_CLOSE = 287,                /* LI_CLOSE  */
+    HEADER_OPEN = 288,             /* HEADER_OPEN  */
+    HEADER_CLOSE = 289,            /* HEADER_CLOSE  */
+    FOOTER_OPEN = 290,             /* FOOTER_OPEN  */
+    FOOTER_CLOSE = 291,            /* FOOTER_CLOSE  */
+    SECTION_OPEN = 292,            /* SECTION_OPEN  */
+    SECTION_CLOSE = 293,           /* SECTION_CLOSE  */
+    ARTICLE_OPEN = 294,            /* ARTICLE_OPEN  */
+    ARTICLE_CLOSE = 295,           /* ARTICLE_CLOSE  */
+    ASIDE_OPEN = 296,              /* ASIDE_OPEN  */
+    ASIDE_CLOSE = 297,             /* ASIDE_CLOSE  */
+    OL_OPEN = 298,                 /* OL_OPEN  */
+    OL_CLOSE = 299,                /* OL_CLOSE  */
+    A_OPEN = 300,                  /* A_OPEN  */
+    A_CLOSE = 301,                 /* A_CLOSE  */
+    STRONG_OPEN = 302,             /* STRONG_OPEN  */
+    STRONG_CLOSE = 303,            /* STRONG_CLOSE  */
+    EM_OPEN = 304,                 /* EM_OPEN  */
+    EM_CLOSE = 305,                /* EM_CLOSE  */
+    U_OPEN = 306,                  /* U_OPEN  */
+    U_CLOSE = 307,                 /* U_CLOSE  */
+    SMALL_OPEN = 308,              /* SMALL_OPEN  */
+    SMALL_CLOSE = 309,             /* SMALL_CLOSE  */
+    PRE_OPEN = 310,                /* PRE_OPEN  */
+    PRE_CLOSE = 311,               /* PRE_CLOSE  */
+    BLOCKQUOTE_OPEN = 312,         /* BLOCKQUOTE_OPEN  */
+    BLOCKQUOTE_CLOSE = 313,        /* BLOCKQUOTE_CLOSE  */
+    CODE_OPEN = 314,               /* CODE_OPEN  */
+    CODE_CLOSE = 315,              /* CODE_CLOSE  */
+    IMG_TAG = 316                  /* IMG_TAG  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -84,7 +127,7 @@ union YYSTYPE
     DOMNodeList* domNodeList;
     char* text;
 
-#line 88 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.hpp"
+#line 131 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

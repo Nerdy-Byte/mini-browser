@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QWidget>
+#include <QListWidget>
 #include <iostream>
 #include "dom_creater.h"
 
@@ -31,9 +32,13 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
         QTextEdit* paragraphDisplay = new QTextEdit();
         paragraphDisplay->setReadOnly(true);
         paragraphDisplay->setPlainText(QString::fromStdString(node->getTextContent()));
+        paragraphDisplay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        int contentHeight = paragraphDisplay->document()->size().height();
+        paragraphDisplay->setMinimumHeight(contentHeight + 10);
         layout->addWidget(paragraphDisplay);
         return;
     }
+
 
     case TagType::TITLE:
         // cout<<"TITLE"<<endl;
@@ -52,6 +57,46 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
         return;
     }
 
+    case TagType::H2: {
+        // cout<<"H1"<<endl;
+        QLabel* headerLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+        QFont font = headerLabel->font();
+        font.setPointSize(16);
+        headerLabel->setFont(font);
+        layout->addWidget(headerLabel);
+        return;
+    }
+
+    case TagType::H3: {
+        // cout<<"H1"<<endl;
+        QLabel* headerLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+        QFont font = headerLabel->font();
+        font.setPointSize(14);
+        headerLabel->setFont(font);
+        layout->addWidget(headerLabel);
+        return;
+    }
+
+    case TagType::H4: {
+        // cout<<"H1"<<endl;
+        QLabel* headerLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+        QFont font = headerLabel->font();
+        font.setPointSize(12);
+        headerLabel->setFont(font);
+        layout->addWidget(headerLabel);
+        return;
+    }
+
+    case TagType::H5: {
+        // cout<<"H1"<<endl;
+        QLabel* headerLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+        QFont font = headerLabel->font();
+        font.setPointSize(10);
+        headerLabel->setFont(font);
+        layout->addWidget(headerLabel);
+        return;
+    }
+
     case TagType::DIV: {
         // cout<<"DIV"<<endl;
         QLabel* divLabel = new QLabel("Div Section:");
@@ -62,6 +107,21 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
         return;
     }
 
+    case TagType::UL: {
+        QListWidget* listWidget = new QListWidget();
+        layout->addWidget(listWidget);
+        for (DOMNode* child : node->getChildren()) {
+            TagType childTagType = getTagType(child->getName());
+            if (childTagType == TagType::LI) {
+                QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(child->getTextContent()));
+                listWidget->addItem(item);
+            } else {
+                cout << "ERROR: Expected <li> in <ul>, but found: " << child->getName() << endl;
+            }
+        }
+        return;
+
+    }
     default:
         cout << "ERROR: Unknown tag type: " << node->getName() << endl;
         return;

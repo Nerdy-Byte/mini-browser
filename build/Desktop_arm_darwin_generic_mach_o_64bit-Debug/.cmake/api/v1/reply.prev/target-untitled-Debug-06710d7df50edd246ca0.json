@@ -72,13 +72,13 @@
 			{
 				"command" : 4,
 				"file" : 1,
-				"line" : 77,
+				"line" : 78,
 				"parent" : 0
 			},
 			{
 				"command" : 5,
 				"file" : 1,
-				"line" : 60,
+				"line" : 61,
 				"parent" : 0
 			},
 			{
@@ -463,7 +463,7 @@
 				3,
 				5,
 				10,
-				11
+				13
 			]
 		},
 		{
@@ -472,16 +472,18 @@
 			[
 				4,
 				9,
-				12
+				11,
+				12,
+				14
 			]
 		},
 		{
 			"name" : "CMake Rules",
 			"sourceIndexes" : 
 			[
-				13,
-				14,
-				15
+				15,
+				16,
+				17
 			]
 		}
 	],
@@ -550,6 +552,16 @@
 			"backtrace" : 4,
 			"path" : "dom_tree.h",
 			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"path" : "lex.l",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 4,
+			"path" : "parser.y",
+			"sourceGroupIndex" : 2
 		},
 		{
 			"backtrace" : 0,
