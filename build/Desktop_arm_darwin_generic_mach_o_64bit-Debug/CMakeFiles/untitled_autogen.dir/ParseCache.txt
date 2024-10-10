@@ -2,11 +2,11 @@
 /Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/dom_creater.h
 /Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/dom_creater.cpp
 /Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/dom_tree.h
-/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/lexer.cpp
+/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/parser.hpp
+/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/main.cpp
 /Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/widget.cpp
  uic:./ui_widget.h
-/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/main.cpp
-/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/parser.hpp
+/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/lexer.cpp
 /Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/widget.h
  mmc:Q_OBJECT
  mdp:/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/Availability.h

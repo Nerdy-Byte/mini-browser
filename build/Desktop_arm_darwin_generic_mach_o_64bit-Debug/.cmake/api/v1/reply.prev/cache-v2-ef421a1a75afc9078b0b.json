@@ -2,6 +2,22 @@
 	"entries" : 
 	[
 		{
+			"name" : "BISON_EXECUTABLE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "path to the bison executable"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/bison"
+		},
+		{
 			"name" : "CMAKE_ADDR2LINE",
 			"properties" : 
 			[
@@ -1442,6 +1458,30 @@
 			"value" : "FALSE"
 		},
 		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_BISON",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding BISON"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[/usr/bin/bison][v2.3()]"
+		},
+		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_FLEX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding FLEX"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[/usr/bin/flex][v2.6.4()]"
+		},
+		{
 			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_OpenGL",
 			"properties" : 
 			[
@@ -1488,6 +1528,54 @@
 			],
 			"type" : "INTERNAL",
 			"value" : "[ON][v()]"
+		},
+		{
+			"name" : "FLEX_EXECUTABLE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "path to the flex executable"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/flex"
+		},
+		{
+			"name" : "FLEX_INCLUDE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to the flex headers"
+				}
+			],
+			"type" : "PATH",
+			"value" : "FLEX_INCLUDE_DIR-NOTFOUND"
+		},
+		{
+			"name" : "FL_LIBRARY",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to the fl library"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "FL_LIBRARY-NOTFOUND"
 		},
 		{
 			"name" : "HAVE_STDATOMIC",

@@ -82,19 +82,14 @@ body:
 // Body content structure
 body_content:
     /* empty */ { $$ = new DOMNodeList(); }  // Empty body content
-    | body_content paragraph {
-        $1->push_back($2);
-        $$ = $1;
-    }
-    | body_content div {
-        $1->push_back($2);
-        $$ = $1;
-    }
-    | body_content h1 {
-        $1->push_back($2);
-        $$ = $1;
-    }
+    | paragraph { $$ = new DOMNodeList(); $$->push_back($1); }
+    | h1 { $$ = new DOMNodeList(); $$->push_back($1); }
+    | div { $$ = new DOMNodeList(); $$->push_back($1); }
+    | body_content paragraph { $1->push_back($2); $$ = $1; }
+    | body_content h1 { $1->push_back($2); $$ = $1; }
+    | body_content div { $1->push_back($2); $$ = $1; }
 ;
+
 
 // Paragraph structure
 paragraph:
@@ -126,12 +121,3 @@ text:
 ;
 
 %%
-
-// Error function
-//void yyerror(const char *s) {
-//    std::cerr << "Error: " << s << std::endl;
-//}
-
-//int main() {
-//    return yyparse();
-//}

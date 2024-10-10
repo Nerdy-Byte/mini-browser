@@ -1105,7 +1105,7 @@ yyreduce:
   case 2: /* start: DOCTYPE html  */
 #line 38 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                  {
-        root = new DOMNode("root");
+        root = new DOMNode(ROOT);
         DOMNodeList* nodeList = new DOMNodeList();
         nodeList->push_back((yyvsp[0].domNode));   // Wrap the single node in a list
         root->appendChildren(*nodeList);
@@ -1116,7 +1116,7 @@ yyreduce:
   case 3: /* html: HTML_OPEN head body HTML_CLOSE  */
 #line 48 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                                    {
-        (yyval.domNode) = new DOMNode("html");
+        (yyval.domNode) = new DOMNode(HTML);
         DOMNodeList* htmlContent = new DOMNodeList();
         htmlContent->push_back((yyvsp[-2].domNode));  // Head node
         htmlContent->push_back((yyvsp[-1].domNode));  // Body node
@@ -1128,7 +1128,7 @@ yyreduce:
   case 4: /* head: HEAD_OPEN title HEAD_CLOSE  */
 #line 59 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                                {
-        (yyval.domNode) = new DOMNode("head");
+        (yyval.domNode) = new DOMNode(HEAD);
         DOMNodeList* headContent = new DOMNodeList();
         headContent->push_back((yyvsp[-1].domNode));  // Title node
         (yyval.domNode)->appendChildren(*headContent);
@@ -1139,7 +1139,7 @@ yyreduce:
   case 5: /* title: TITLE_OPEN TEXT TITLE_CLOSE  */
 #line 69 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                                 {
-        (yyval.domNode) = new DOMNode("title", (yyvsp[-1].text));  // Text inside title
+        (yyval.domNode) = new DOMNode(TITLE, (yyvsp[-1].text));  // Text inside title
     }
 #line 1145 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
@@ -1147,7 +1147,7 @@ yyreduce:
   case 6: /* body: BODY_OPEN body_content BODY_CLOSE  */
 #line 76 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                                       {
-        (yyval.domNode) = new DOMNode("body");
+        (yyval.domNode) = new DOMNode(BODY);
         (yyval.domNode)->appendChildren(*(yyvsp[-1].domNodeList));  // Append body content (list of nodes)
     }
 #line 1154 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
@@ -1189,7 +1189,7 @@ yyreduce:
   case 11: /* paragraph: P_OPEN text P_CLOSE  */
 #line 101 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                         {
-        (yyval.domNode) = new DOMNode("p", (yyvsp[-1].text));  // Text inside paragraph
+        (yyval.domNode) = new DOMNode(P, (yyvsp[-1].text));  // Text inside paragraph
     }
 #line 1195 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
@@ -1197,7 +1197,7 @@ yyreduce:
   case 12: /* div: DIV_OPEN body_content DIV_CLOSE  */
 #line 108 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                                     {
-        (yyval.domNode) = new DOMNode("div");
+        (yyval.domNode) = new DOMNode(DIV);
         (yyval.domNode)->appendChildren(*(yyvsp[-1].domNodeList));  // Content inside div
     }
 #line 1204 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
@@ -1206,7 +1206,7 @@ yyreduce:
   case 13: /* h1: H1_OPEN text H1_CLOSE  */
 #line 116 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                           {
-        (yyval.domNode) = new DOMNode("h1", (yyvsp[-1].text));  // Text inside h1
+        (yyval.domNode) = new DOMNode(H1, (yyvsp[-1].text));  // Text inside h1
     }
 #line 1212 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;

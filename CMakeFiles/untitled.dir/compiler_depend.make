@@ -1829,6 +1829,7 @@ CMakeFiles/untitled.dir/dom_creater.cpp.o: dom_creater.cpp \
   /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include/stdint.h \
+  dom_creater.h \
   dom_tree.h
 
 CMakeFiles/untitled.dir/lexer.cpp.o: lexer.cpp \

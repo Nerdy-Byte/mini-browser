@@ -974,8 +974,10 @@ CMakeFiles/untitled.dir/main.cpp.o: \
   /opt/homebrew/opt/qt@5/lib/QtCore.framework/Headers/qmap.h \
   /opt/homebrew/opt/qt@5/lib/QtCore.framework/Headers/qhash.h \
   /opt/homebrew/opt/qt@5/lib/QtCore.framework/Headers/qshareddata.h \
-  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/QTabWidget \
-  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qtabwidget.h \
+  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/QTextEdit \
+  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qtextedit.h \
+  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qabstractscrollarea.h \
+  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qframe.h \
   /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qwidget.h \
   /opt/homebrew/opt/qt@5/lib/QtGui.framework/Headers/qpaintdevice.h \
   /opt/homebrew/opt/qt@5/lib/QtCore.framework/Headers/qrect.h \
@@ -1001,23 +1003,23 @@ CMakeFiles/untitled.dir/main.cpp.o: \
   /opt/homebrew/opt/qt@5/lib/QtGui.framework/Headers/qfontinfo.h \
   /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qsizepolicy.h \
   /opt/homebrew/opt/qt@5/lib/QtGui.framework/Headers/qkeysequence.h \
-  /opt/homebrew/opt/qt@5/lib/QtGui.framework/Headers/qicon.h \
-  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/QTextEdit \
-  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qtextedit.h \
-  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qabstractscrollarea.h \
-  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qframe.h \
   /opt/homebrew/opt/qt@5/lib/QtGui.framework/Headers/qtextdocument.h \
   /opt/homebrew/opt/qt@5/lib/QtCore.framework/Headers/qurl.h \
   /opt/homebrew/opt/qt@5/lib/QtGui.framework/Headers/qtextoption.h \
   /opt/homebrew/opt/qt@5/lib/QtGui.framework/Headers/qtextcursor.h \
   /opt/homebrew/opt/qt@5/lib/QtGui.framework/Headers/qtextformat.h \
   /opt/homebrew/opt/qt@5/lib/QtGui.framework/Headers/qpen.h \
-  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/QPushButton \
-  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qpushbutton.h \
-  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qabstractbutton.h \
   /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/QVBoxLayout \
   /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qboxlayout.h \
   /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qlayout.h \
   /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qlayoutitem.h \
   /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qgridlayout.h \
-  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/QWidget
+  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/QLabel \
+  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/qlabel.h \
+  /opt/homebrew/opt/qt@5/lib/QtWidgets.framework/Headers/QWidget \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/c++/v1/iostream \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/c++/v1/istream \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/c++/v1/ostream \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/c++/v1/bitset \
+  /Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/dom_creater.h \
+  /Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/dom_tree.h
