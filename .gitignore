@@ -1,0 +1,45 @@
+# Ignore build directories
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.out
+
+# Ignore auto-generated parser and lexer files
+lex.yy.c
+parser.tab.c
+parser.tab.h
+
+# Ignore Qt Creator specific files
+*.user
+*.qtcsettings
+*.pro.user
+
+# Ignore Qt build output
+*.app/
+*.moc
+*.qrc
+*.cpp.o
+*.cpp.o.d
+
+# Ignore moc, rcc, uic auto-generated files
+moc_*.cpp
+moc_*.h
+ui_*.h
+qrc_*.cpp
+
+# Ignore temporary files
+*.log
+*.swp
+*.swo
+*.tmp
+
+# Ignore autogen files
+*_autogen/

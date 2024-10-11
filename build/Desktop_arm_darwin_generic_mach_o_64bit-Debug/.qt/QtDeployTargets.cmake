@@ -1,2 +1,0 @@
-set(__QT_DEPLOY_TARGET_untitled_FILE /Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/untitled.app/Contents/MacOS/untitled)
-set(__QT_DEPLOY_TARGET_untitled_TYPE EXECUTABLE)
