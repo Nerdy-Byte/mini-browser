@@ -1,6 +1,6 @@
-#line 1 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/lexer.cpp"
+#line 1 "lexer.cpp"
 
-#line 3 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/lexer.cpp"
+#line 3 "lexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 

@@ -1,11 +1,16 @@
 %{
     #include <cstring>
-    #include "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/dom_tree.h"
+    #include "../dom_tree.h"
     #include "parser.hpp"
 
     extern int yylex();
     extern FILE *yyin;
-    void yyerror(const char *s);
+    void yyerror(const char *s) {
+    extern int yylineno; // Declare yylineno here
+    fprintf(stderr, "Parse error! Message: %s at line %d\n", s, yylineno);
+    exit(-1);
+}
+
     using namespace std;
     DOMNode* root = nullptr;
 %}
@@ -47,7 +52,8 @@
 
 
 
-%type <domNode> html head title body div paragraph h1 h2 h3 h4 h5 nav header list_item unordered_list
+%type <domNode> html head title body div paragraph h1 h2 h3 h4 h5 nav header list_item unordered_list section strong em u small
+%type <domNode> blockquote
 %type <domNodeList> body_content unordered_list_content
 %type <text> text
 
@@ -102,15 +108,6 @@ body:
 // Body content structure
 body_content:
     /* empty */ { $$ = new DOMNodeList(); }  // Empty body content
-    | paragraph { $$ = new DOMNodeList(); $$->push_back($1); }
-    | h1 { $$ = new DOMNodeList(); $$->push_back($1); }
-    | h2 { $$ = new DOMNodeList(); $$->push_back($1); }
-    | h3 { $$ = new DOMNodeList(); $$->push_back($1); }
-    | h4 { $$ = new DOMNodeList(); $$->push_back($1); }
-    | h5 { $$ = new DOMNodeList(); $$->push_back($1); }
-    | nav { $$ = new DOMNodeList(); $$->push_back($1); }
-    | div { $$ = new DOMNodeList(); $$->push_back($1); }
-    | unordered_list { $$ = new DOMNodeList(); $$->push_back($1); }
     | body_content paragraph { $1->push_back($2); $$ = $1; }
     | body_content h1 { $1->push_back($2); $$ = $1; }
     | body_content h2 { $1->push_back($2); $$ = $1; }
@@ -118,9 +115,18 @@ body_content:
     | body_content h4 { $1->push_back($2); $$ = $1; }
     | body_content h5 { $1->push_back($2); $$ = $1; }
     | body_content nav { $1->push_back($2); $$ = $1; }
-    | body_content div { $1->push_back($2); $$ = $1; }
+    | body_content header { $1->push_back($2); $$ = $1; }
     | body_content unordered_list { $1->push_back($2); $$ = $1; }
+    | body_content section { $1->push_back($2); $$ = $1; }
+    | body_content div { $1->push_back($2); $$ = $1; }
+    | body_content strong { $1->push_back($2); $$ = $1; }
+    | body_content em { $1->push_back($2); $$ = $1; }
+    | body_content u { $1->push_back($2); $$ = $1; }
+    | body_content small { $1->push_back($2); $$ = $1; }
+    | body_content blockquote { $1->push_back($2); $$ = $1; }
 ;
+
+
 
 // Paragraph structure
 paragraph:
@@ -205,6 +211,50 @@ list_item:
         $$ = new DOMNode(LI, $2);  // Text inside list item
     }
 ;
+
+// Section structure
+section:
+    SECTION_OPEN body_content SECTION_CLOSE {
+        $$ = new DOMNode(SECTION);
+        $$->appendChildren(*$2);  // Content inside section
+    }
+;
+
+// Strong structure
+strong:
+    STRONG_OPEN text STRONG_CLOSE {
+        $$ = new DOMNode(STRONG, $2);  // Text inside strong (bold)
+    }
+;
+
+// Emphasis (em) structure
+em:
+    EM_OPEN text EM_CLOSE {
+        $$ = new DOMNode(EM, $2);  // Text inside em (italic)
+    }
+;
+
+// Underline (u) structure
+u:
+    U_OPEN text U_CLOSE {
+        $$ = new DOMNode(U, $2);  // Text inside u (underline)
+    }
+;
+
+// Small tag structure
+small:
+    SMALL_OPEN text SMALL_CLOSE {
+        $$ = new DOMNode(SMALL, $2);  // Text inside small (smaller font)
+    }
+;
+
+// Blockquote structure
+blockquote:
+    BLOCKQUOTE_OPEN text BLOCKQUOTE_CLOSE {
+        $$ = new DOMNode(BLOCK_QUOTE, $2);  // Create a DOMNode for blockquote with its text content
+    }
+;
+
 
 // Text structure
 text:

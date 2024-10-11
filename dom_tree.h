@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 #include <string>
 
 // Enumeration for HTML tags
@@ -47,6 +48,7 @@ inline std::string tagTypeToString(TagType tagType) {
     case TagType::HEAD: return "head";
     case TagType::TITLE: return "title";
     case TagType::BODY: return "body";
+    case TagType::NAV: return "nav";
     case TagType::DIV: return "div";
     case TagType::P: return "p";
     case TagType::H1: return "h1";
@@ -98,7 +100,7 @@ inline TagType getTagType(const std::string& tagName) {
     if (tagName == "em") return TagType::EM;
     if (tagName == "u") return TagType::U;
     if (tagName == "small") return TagType::SMALL;
-    if (tagName == "blockquote") return TagType::BLOCK_QUOTE;
+    if (tagName == "block_quote") return TagType::BLOCK_QUOTE;
     if (tagName == "pre") return TagType::PRE;
     if (tagName == "code") return TagType::CODE;
     if (tagName == "nav") return TagType::NAV;
@@ -127,7 +129,7 @@ public:
     DOMNode(const DOMNode&) = delete;
     DOMNode& operator=(const DOMNode&) = delete;
 
-    DOMNode(DOMNode&& other) noexcept : tag(std::move(other.tag)), content(std::move(other.content)), children(std::move(other.children)) {
+    DOMNode(DOMNode&& other) noexcept : tag(std::move(other.tag)), content(std::move(other.content)), children(std::move(other.children)), attributes(std::move(other.attributes)) {
         other.children.clear();
     }
 
@@ -139,42 +141,73 @@ public:
             tag = std::move(other.tag);
             content = std::move(other.content);
             children = std::move(other.children);
+            attributes = std::move(other.attributes);
             other.children.clear();
         }
         return *this;
     }
 
+    // Method to append children nodes
     void appendChildren(const std::vector<DOMNode*>& childList) {
         children.insert(children.end(), childList.begin(), childList.end());
     }
 
+    // Method to set an attribute
+    void setAttribute(const std::string& name, const std::string& value) {
+        attributes[name] = value;
+    }
+
+    // Method to get an attribute
+    std::string getAttribute(const std::string& name) const {
+        auto it = attributes.find(name);
+        if (it != attributes.end()) {
+            return it->second;
+        }
+        return "";
+    }
+
+    // Method to print the DOM tree (recursive)
     void print(int depth = 0) const {
         std::cout << std::string(depth * 2, ' ');
-        std::cout << tag << std::endl;
+        std::cout << tag;
+        if (!content.empty()) {
+            std::cout << ": " << content;
+        }
+
+        // Print attributes
+        for (const auto& [key, value] : attributes) {
+            std::cout << " (" << key << "=\"" << value << "\")";
+        }
+        std::cout << std::endl;
 
         for (const auto* child : children) {
             child->print(depth + 1);
         }
     }
 
+    // Getter for the tag name
     const std::string& getName() const {
         return tag;
     }
 
+    // Getter for the text content
     const std::string& getTextContent() const {
         return content;
     }
 
+    // Getter for child nodes
     const std::vector<DOMNode*>& getChildren() const {
         return children;
     }
 
 private:
-    std::string tag;
-    std::string content;
-    std::vector<DOMNode*> children;
+    std::string tag;  // Tag name (e.g., "p", "img")
+    std::string content;  // Text content of the node
+    std::vector<DOMNode*> children;  // Children of this node
+    std::map<std::string, std::string> attributes;  // Attributes (e.g., src for img, href for a)
 };
 
 typedef std::vector<DOMNode*> DOMNodeList;
+
 
 #endif

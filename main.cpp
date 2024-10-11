@@ -122,6 +122,82 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
         return;
 
     }
+
+    case TagType::HEADER: {
+        QLabel* headerLabel = new QLabel("Header:");
+        layout->addWidget(headerLabel);
+        for (DOMNode* child : node->getChildren()) {
+            renderDOMNode(child, layout);  
+        }
+        return;
+    }
+
+    case TagType::NAV: {
+    QLabel* navLabel = new QLabel("Nav");
+    layout->addWidget(navLabel);
+    for (DOMNode* child : node->getChildren()) {
+        renderDOMNode(child, layout);
+    }
+    return;
+    }
+
+    case TagType::SECTION: {
+    QLabel* sectionLabel = new QLabel("Section:");
+    layout->addWidget(sectionLabel);
+    for (DOMNode* child : node->getChildren()) {
+        renderDOMNode(child, layout);
+    }
+    return;
+    }
+
+    case TagType::STRONG: {
+    QLabel* strongLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+    QFont font = strongLabel->font();
+    font.setBold(true);
+    strongLabel->setFont(font);
+    layout->addWidget(strongLabel);
+    return;
+    }
+
+    case TagType::EM: {
+        QLabel* emLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+        QFont font = emLabel->font();
+        font.setItalic(true);  // Make the text italic
+        emLabel->setFont(font);
+        layout->addWidget(emLabel);
+        return;
+    }
+
+    case TagType::U: {
+        QLabel* underlineLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+        QFont font = underlineLabel->font();
+        font.setUnderline(true);  // Underline the text for <u>
+        underlineLabel->setFont(font);
+        layout->addWidget(underlineLabel);
+        return;
+    }
+    case TagType::SMALL: {
+        QLabel* smallLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+        QFont font = smallLabel->font();
+        font.setPointSize(8);  // Set the font size smaller for <small>
+        smallLabel->setFont(font);
+        layout->addWidget(smallLabel);
+        return;
+    }
+    case TagType::BLOCK_QUOTE: {
+        QTextEdit* blockquoteDisplay = new QTextEdit();
+        blockquoteDisplay->setReadOnly(true);
+        blockquoteDisplay->setPlainText(QString::fromStdString(node->getTextContent()));
+        blockquoteDisplay->setFrameStyle(QFrame::NoFrame);  // Disable the default frame/border
+        blockquoteDisplay->setStyleSheet("background-color: #d3d3d3; padding: 10px;"); // No border
+        blockquoteDisplay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        int contentHeight = blockquoteDisplay->document()->size().height();
+        blockquoteDisplay->setMinimumHeight(contentHeight + 20);
+        layout->addWidget(blockquoteDisplay);
+        return;
+    }
+
+
     default:
         cout << "ERROR: Unknown tag type: " << node->getName() << endl;
         return;
