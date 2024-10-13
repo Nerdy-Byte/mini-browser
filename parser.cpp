@@ -70,16 +70,21 @@
 #line 1 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
 
     #include <cstring>
-    #include "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/dom_tree.h"
-    #include "parser.tab.h"
+    #include "../../dom_tree.h"
+    #include "parser.hpp"
 
     extern int yylex();
     extern FILE *yyin;
-    void yyerror(const char *s);
+    void yyerror(const char *s) {
+    extern int yylineno; // Declare yylineno here
+    fprintf(stderr, "Parse error! Message: %s at line %d\n", s, yylineno);
+    exit(-1);
+}
+
     using namespace std;
     DOMNode* root = nullptr;
 
-#line 83 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 88 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -184,10 +189,17 @@ enum yysymbol_kind_t
   YYSYMBOL_h4 = 74,                        /* h4  */
   YYSYMBOL_h5 = 75,                        /* h5  */
   YYSYMBOL_nav = 76,                       /* nav  */
-  YYSYMBOL_unordered_list = 77,            /* unordered_list  */
-  YYSYMBOL_unordered_list_content = 78,    /* unordered_list_content  */
-  YYSYMBOL_list_item = 79,                 /* list_item  */
-  YYSYMBOL_text = 80                       /* text  */
+  YYSYMBOL_header = 77,                    /* header  */
+  YYSYMBOL_unordered_list = 78,            /* unordered_list  */
+  YYSYMBOL_unordered_list_content = 79,    /* unordered_list_content  */
+  YYSYMBOL_list_item = 80,                 /* list_item  */
+  YYSYMBOL_section = 81,                   /* section  */
+  YYSYMBOL_strong = 82,                    /* strong  */
+  YYSYMBOL_em = 83,                        /* em  */
+  YYSYMBOL_u = 84,                         /* u  */
+  YYSYMBOL_small = 85,                     /* small  */
+  YYSYMBOL_blockquote = 86,                /* blockquote  */
+  YYSYMBOL_text = 87                       /* text  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -515,16 +527,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  5
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   109
+#define YYLAST   179
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  62
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  19
+#define YYNNTS  26
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  38
+#define YYNRULES  43
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  69
+#define YYNSTATES  88
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   316
@@ -577,12 +589,13 @@ static const yytype_int8 yytranslate[] =
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_int16 yyrline[] =
 {
-       0,    58,    58,    68,    79,    89,    96,   104,   105,   106,
-     107,   108,   109,   110,   111,   112,   113,   114,   115,   116,
-     117,   118,   119,   120,   121,   122,   127,   134,   142,   149,
-     155,   161,   167,   174,   190,   198,   199,   204,   211
+       0,    64,    64,    74,    85,    95,   102,   110,   111,   112,
+     113,   114,   115,   116,   117,   118,   119,   120,   121,   122,
+     123,   124,   125,   126,   133,   140,   148,   155,   161,   167,
+     173,   180,   188,   196,   204,   205,   210,   217,   225,   232,
+     239,   246,   253,   261
 };
 #endif
 
@@ -612,7 +625,8 @@ static const char *const yytname[] =
   "BLOCKQUOTE_OPEN", "BLOCKQUOTE_CLOSE", "CODE_OPEN", "CODE_CLOSE",
   "IMG_TAG", "$accept", "start", "html", "head", "title", "body",
   "body_content", "paragraph", "div", "h1", "h2", "h3", "h4", "h5", "nav",
-  "unordered_list", "unordered_list_content", "list_item", "text", YY_NULLPTR
+  "header", "unordered_list", "unordered_list_content", "list_item",
+  "section", "strong", "em", "u", "small", "blockquote", "text", YY_NULLPTR
 };
 
 static const char *
@@ -622,7 +636,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-19)
+#define YYPACT_NINF (-13)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -636,13 +650,15 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-       4,     8,    16,    12,   -19,   -19,    29,     9,    36,    32,
-      80,    35,    33,   -19,    80,    39,    39,    39,    39,    39,
-      39,    80,    13,    43,   -19,   -19,   -19,   -19,   -19,   -19,
-     -19,   -19,   -19,   -19,   -19,    60,   -19,    31,    30,    37,
-      27,    26,    25,    63,    39,     6,   -19,   -19,   -19,   -19,
-     -19,   -19,   -19,   -19,   -19,   -19,   -19,   -19,   -19,   -19,
-     -19,   -19,   -19,   -19,   -19,    20,   -19,   -19,   -19
+      -2,    -1,     6,     1,   -13,   -13,     3,    12,     7,     8,
+     -13,    21,     4,   -13,   -12,   -13,   -13,   -13,   -13,    26,
+      26,    26,    26,    26,    26,   -13,     0,   -13,   -13,    26,
+      26,    26,    26,    26,   -13,   -13,   -13,   -13,   -13,   -13,
+     -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,
+       5,   -13,    17,    18,    20,    24,    23,    22,    36,    26,
+      13,   -13,    57,    82,     2,    10,    14,    25,     9,   -13,
+     -13,   -13,   -13,   -13,   -13,   -13,   -13,    39,   -13,   -13,
+     -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -651,26 +667,30 @@ static const yytype_int8 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        0,     0,     0,     0,     2,     1,     0,     0,     0,     0,
-       7,     0,     0,     4,     7,     0,     0,     0,     0,     0,
-       0,     7,     0,     0,     8,    15,     9,    10,    11,    12,
-      13,    14,    16,     3,     5,     0,    38,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,    35,     6,    17,    24,
-      18,    19,    20,    21,    22,    23,    25,    27,    26,    28,
-      29,    30,    31,    32,    33,     0,    34,    36,    37
+       7,     0,     0,     4,     0,     3,     5,     6,     7,     0,
+       0,     0,     0,     0,     0,     7,     0,     7,     7,     0,
+       0,     0,     0,     0,     8,    18,     9,    10,    11,    12,
+      13,    14,    15,    16,    17,    19,    20,    21,    22,    23,
+       0,    43,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    34,     0,     0,     0,     0,     0,     0,     0,    25,
+      24,    26,    27,    28,    29,    30,    31,     0,    33,    35,
+      32,    37,    38,    39,    40,    41,    42,    36
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -19,   -19,   -19,   -19,   -19,   -19,    -7,   -18,   -17,   -14,
-     -13,   -12,   -11,    -8,    10,    11,   -19,    14,   -16
+     -13,   -13,   -13,   -13,   -13,   -13,    98,   -13,   -13,   -13,
+     -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,    15,   -13,
+     -13,   -13,   -13,   -13,   -13,   120
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     2,     4,     7,     9,    11,    23,    24,    25,    26,
-      27,    28,    29,    30,    31,    32,    45,    46,    37
+       0,     2,     4,     7,     9,    11,    14,    34,    35,    36,
+      37,    38,    39,    40,    41,    42,    43,    60,    61,    44,
+      45,    46,    47,    48,    49,    52
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -678,32 +698,46 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      38,    39,    40,    41,    42,    48,    49,    35,     1,    50,
-      51,    52,    53,     3,    43,    54,     5,    48,    49,     6,
-      10,    50,    51,    52,    53,    48,    49,    54,    65,    50,
-      51,    52,    53,    55,    56,    54,    66,    44,     8,    12,
-      13,    33,    36,    34,    44,    55,    56,    58,    59,    61,
-      62,    63,    68,    55,    56,    47,    14,    60,    15,    67,
-      16,     0,    17,     0,    18,     0,    19,     0,    20,     0,
-      21,     0,    22,    14,    57,    15,    14,    16,    15,    17,
-      16,    18,    17,    19,    18,    20,    19,    21,    20,    22,
-      21,    64,    22,    14,     0,    15,     0,    16,     0,    17,
-       0,    18,     0,    19,     0,    20,     0,    21,     0,    22
+      17,    18,     1,    19,     3,    20,     5,    21,     6,    22,
+      12,    23,     8,    24,    16,    25,    13,    26,    18,    69,
+      19,    27,    20,    10,    21,    28,    22,    15,    23,    51,
+      24,    59,    25,    70,    26,    29,    71,    30,    27,    31,
+      72,    32,    28,    78,    59,    33,    73,    74,    75,    18,
+      82,    19,    29,    20,    30,    21,    31,    22,    32,    23,
+      83,    24,    33,    25,    76,    26,    84,    86,     0,    27,
+      18,    87,    19,    28,    20,    79,    21,     0,    22,    85,
+      23,     0,    24,    29,    25,    30,    26,    31,     0,    32,
+      27,    80,     0,    33,    28,    18,     0,    19,     0,    20,
+       0,    21,     0,    22,    29,    23,    30,    24,    31,    25,
+      32,    26,     0,     0,    33,    27,    50,     0,     0,    28,
+      81,     0,     0,    58,     0,    62,    63,     0,     0,    29,
+       0,    30,     0,    31,     0,    32,     0,     0,     0,    33,
+      53,    54,    55,    56,    57,     0,     0,     0,     0,    64,
+      65,    66,    67,    68,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    77
 };
 
 static const yytype_int8 yycheck[] =
 {
-      16,    17,    18,    19,    20,    23,    23,    14,     4,    23,
-      23,    23,    23,     5,    21,    23,     0,    35,    35,     7,
-      11,    35,    35,    35,    35,    43,    43,    35,    44,    43,
-      43,    43,    43,    23,    23,    43,    30,    31,     9,     3,
-       8,     6,     3,    10,    31,    35,    35,    16,    18,    22,
-      24,    26,    32,    43,    43,    12,    13,    20,    15,    45,
-      17,    -1,    19,    -1,    21,    -1,    23,    -1,    25,    -1,
-      27,    -1,    29,    13,    14,    15,    13,    17,    15,    19,
-      17,    21,    19,    23,    21,    25,    23,    27,    25,    29,
-      27,    28,    29,    13,    -1,    15,    -1,    17,    -1,    19,
-      -1,    21,    -1,    23,    -1,    25,    -1,    27,    -1,    29
+      12,    13,     4,    15,     5,    17,     0,    19,     7,    21,
+       3,    23,     9,    25,    10,    27,     8,    29,    13,    14,
+      15,    33,    17,    11,    19,    37,    21,     6,    23,     3,
+      25,    31,    27,    16,    29,    47,    18,    49,    33,    51,
+      20,    53,    37,    30,    31,    57,    22,    24,    26,    13,
+      48,    15,    47,    17,    49,    19,    51,    21,    53,    23,
+      50,    25,    57,    27,    28,    29,    52,    58,    -1,    33,
+      13,    32,    15,    37,    17,    60,    19,    -1,    21,    54,
+      23,    -1,    25,    47,    27,    49,    29,    51,    -1,    53,
+      33,    34,    -1,    57,    37,    13,    -1,    15,    -1,    17,
+      -1,    19,    -1,    21,    47,    23,    49,    25,    51,    27,
+      53,    29,    -1,    -1,    57,    33,    18,    -1,    -1,    37,
+      38,    -1,    -1,    25,    -1,    27,    28,    -1,    -1,    47,
+      -1,    49,    -1,    51,    -1,    53,    -1,    -1,    -1,    57,
+      20,    21,    22,    23,    24,    -1,    -1,    -1,    -1,    29,
+      30,    31,    32,    33,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    59
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -711,12 +745,14 @@ static const yytype_int8 yycheck[] =
 static const yytype_int8 yystos[] =
 {
        0,     4,    63,     5,    64,     0,     7,    65,     9,    66,
-      11,    67,     3,     8,    13,    15,    17,    19,    21,    23,
-      25,    27,    29,    68,    69,    70,    71,    72,    73,    74,
-      75,    76,    77,     6,    10,    68,     3,    80,    80,    80,
-      80,    80,    80,    68,    31,    78,    79,    12,    69,    70,
-      71,    72,    73,    74,    75,    76,    77,    14,    16,    18,
-      20,    22,    24,    26,    28,    80,    30,    79,    32
+      11,    67,     3,     8,    68,     6,    10,    12,    13,    15,
+      17,    19,    21,    23,    25,    27,    29,    33,    37,    47,
+      49,    51,    53,    57,    69,    70,    71,    72,    73,    74,
+      75,    76,    77,    78,    81,    82,    83,    84,    85,    86,
+      68,     3,    87,    87,    87,    87,    87,    87,    68,    31,
+      79,    80,    68,    68,    87,    87,    87,    87,    87,    14,
+      16,    18,    20,    22,    24,    26,    28,    87,    30,    80,
+      34,    38,    48,    50,    52,    54,    58,    32
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -724,17 +760,19 @@ static const yytype_int8 yyr1[] =
 {
        0,    62,    63,    64,    65,    66,    67,    68,    68,    68,
       68,    68,    68,    68,    68,    68,    68,    68,    68,    68,
-      68,    68,    68,    68,    68,    68,    69,    70,    71,    72,
-      73,    74,    75,    76,    77,    78,    78,    79,    80
+      68,    68,    68,    68,    69,    70,    71,    72,    73,    74,
+      75,    76,    77,    78,    79,    79,    80,    81,    82,    83,
+      84,    85,    86,    87
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     2,     4,     3,     3,     3,     0,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     3,     3,     3,     3,
-       3,     3,     3,     3,     3,     1,     2,     3,     1
+       0,     2,     2,     4,     3,     3,     3,     0,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     3,     1,     2,     3,     3,     3,     3,
+       3,     3,     3,     1
 };
 
 
@@ -1198,18 +1236,18 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* start: DOCTYPE html  */
-#line 58 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+#line 64 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                  {
         root = new DOMNode(ROOT);
         DOMNodeList* nodeList = new DOMNodeList();
         nodeList->push_back((yyvsp[0].domNode));   // Wrap the single node in a list
         root->appendChildren(*nodeList);
     }
-#line 1209 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1247 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
   case 3: /* html: HTML_OPEN head body HTML_CLOSE  */
-#line 68 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+#line 74 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                                    {
         (yyval.domNode) = new DOMNode(HTML);
         DOMNodeList* htmlContent = new DOMNodeList();
@@ -1217,256 +1255,302 @@ yyreduce:
         htmlContent->push_back((yyvsp[-1].domNode));  // Body node
         (yyval.domNode)->appendChildren(*htmlContent);
     }
-#line 1221 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1259 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
   case 4: /* head: HEAD_OPEN title HEAD_CLOSE  */
-#line 79 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+#line 85 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                                {
         (yyval.domNode) = new DOMNode(HEAD);
         DOMNodeList* headContent = new DOMNodeList();
         headContent->push_back((yyvsp[-1].domNode));  // Title node
         (yyval.domNode)->appendChildren(*headContent);
     }
-#line 1232 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1270 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
   case 5: /* title: TITLE_OPEN TEXT TITLE_CLOSE  */
-#line 89 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+#line 95 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                                 {
         (yyval.domNode) = new DOMNode(TITLE, (yyvsp[-1].text));  // Text inside title
     }
-#line 1240 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1278 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
   case 6: /* body: BODY_OPEN body_content BODY_CLOSE  */
-#line 96 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+#line 102 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                                       {
         (yyval.domNode) = new DOMNode(BODY);
         (yyval.domNode)->appendChildren(*(yyvsp[-1].domNodeList));  // Append body content (list of nodes)
     }
-#line 1249 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1287 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
   case 7: /* body_content: %empty  */
-#line 104 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-                { (yyval.domNodeList) = new DOMNodeList(); }
-#line 1255 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 8: /* body_content: paragraph  */
-#line 105 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-                { (yyval.domNodeList) = new DOMNodeList(); (yyval.domNodeList)->push_back((yyvsp[0].domNode)); }
-#line 1261 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 9: /* body_content: h1  */
-#line 106 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-         { (yyval.domNodeList) = new DOMNodeList(); (yyval.domNodeList)->push_back((yyvsp[0].domNode)); }
-#line 1267 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 10: /* body_content: h2  */
-#line 107 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-         { (yyval.domNodeList) = new DOMNodeList(); (yyval.domNodeList)->push_back((yyvsp[0].domNode)); }
-#line 1273 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 11: /* body_content: h3  */
-#line 108 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-         { (yyval.domNodeList) = new DOMNodeList(); (yyval.domNodeList)->push_back((yyvsp[0].domNode)); }
-#line 1279 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 12: /* body_content: h4  */
-#line 109 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-         { (yyval.domNodeList) = new DOMNodeList(); (yyval.domNodeList)->push_back((yyvsp[0].domNode)); }
-#line 1285 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 13: /* body_content: h5  */
 #line 110 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-         { (yyval.domNodeList) = new DOMNodeList(); (yyval.domNodeList)->push_back((yyvsp[0].domNode)); }
-#line 1291 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+                { (yyval.domNodeList) = new DOMNodeList(); }
+#line 1293 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 14: /* body_content: nav  */
+  case 8: /* body_content: body_content paragraph  */
 #line 111 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-          { (yyval.domNodeList) = new DOMNodeList(); (yyval.domNodeList)->push_back((yyvsp[0].domNode)); }
-#line 1297 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 15: /* body_content: div  */
-#line 112 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-          { (yyval.domNodeList) = new DOMNodeList(); (yyval.domNodeList)->push_back((yyvsp[0].domNode)); }
-#line 1303 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 16: /* body_content: unordered_list  */
-#line 113 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-                     { (yyval.domNodeList) = new DOMNodeList(); (yyval.domNodeList)->push_back((yyvsp[0].domNode)); }
-#line 1309 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 17: /* body_content: body_content paragraph  */
-#line 114 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                              { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
-#line 1315 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1299 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 18: /* body_content: body_content h1  */
+  case 9: /* body_content: body_content h1  */
+#line 112 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                      { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
+#line 1305 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 10: /* body_content: body_content h2  */
+#line 113 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                      { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
+#line 1311 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 11: /* body_content: body_content h3  */
+#line 114 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                      { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
+#line 1317 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 12: /* body_content: body_content h4  */
 #line 115 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                       { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
-#line 1321 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1323 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 19: /* body_content: body_content h2  */
+  case 13: /* body_content: body_content h5  */
 #line 116 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                       { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
-#line 1327 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1329 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 20: /* body_content: body_content h3  */
+  case 14: /* body_content: body_content nav  */
 #line 117 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-                      { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
-#line 1333 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 21: /* body_content: body_content h4  */
-#line 118 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-                      { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
-#line 1339 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 22: /* body_content: body_content h5  */
-#line 119 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-                      { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
-#line 1345 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 23: /* body_content: body_content nav  */
-#line 120 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                        { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
-#line 1351 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1335 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 24: /* body_content: body_content div  */
+  case 15: /* body_content: body_content header  */
+#line 118 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                          { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
+#line 1341 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 16: /* body_content: body_content unordered_list  */
+#line 119 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                                  { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
+#line 1347 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 17: /* body_content: body_content section  */
+#line 120 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                           { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
+#line 1353 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 18: /* body_content: body_content div  */
 #line 121 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                        { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
-#line 1357 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1359 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 25: /* body_content: body_content unordered_list  */
+  case 19: /* body_content: body_content strong  */
 #line 122 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-                                  { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
-#line 1363 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+                          { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
+#line 1365 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 26: /* paragraph: P_OPEN text P_CLOSE  */
-#line 127 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-                        {
-        (yyval.domNode) = new DOMNode(P, (yyvsp[-1].text));  // Text inside paragraph
-    }
+  case 20: /* body_content: body_content em  */
+#line 123 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                      { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
 #line 1371 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 27: /* div: DIV_OPEN body_content DIV_CLOSE  */
-#line 134 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+  case 21: /* body_content: body_content u  */
+#line 124 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                     { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
+#line 1377 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 22: /* body_content: body_content small  */
+#line 125 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                         { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
+#line 1383 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 23: /* body_content: body_content blockquote  */
+#line 126 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                              { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
+#line 1389 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 24: /* paragraph: P_OPEN text P_CLOSE  */
+#line 133 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                        {
+        (yyval.domNode) = new DOMNode(P, (yyvsp[-1].text));  // Text inside paragraph
+    }
+#line 1397 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 25: /* div: DIV_OPEN body_content DIV_CLOSE  */
+#line 140 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                                     {
         (yyval.domNode) = new DOMNode(DIV);
         (yyval.domNode)->appendChildren(*(yyvsp[-1].domNodeList));  // Content inside div
     }
-#line 1380 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1406 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 28: /* h1: H1_OPEN text H1_CLOSE  */
-#line 142 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+  case 26: /* h1: H1_OPEN text H1_CLOSE  */
+#line 148 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                           {
         (yyval.domNode) = new DOMNode(H1, (yyvsp[-1].text));  // Text inside h1
     }
-#line 1388 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1414 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 29: /* h2: H2_OPEN text H2_CLOSE  */
-#line 149 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+  case 27: /* h2: H2_OPEN text H2_CLOSE  */
+#line 155 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                           {
         (yyval.domNode) = new DOMNode(H2, (yyvsp[-1].text));  // Text inside h2
     }
-#line 1396 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1422 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 30: /* h3: H3_OPEN text H3_CLOSE  */
-#line 155 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+  case 28: /* h3: H3_OPEN text H3_CLOSE  */
+#line 161 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                           {
         (yyval.domNode) = new DOMNode(H3, (yyvsp[-1].text));  // Text inside h2
     }
-#line 1404 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1430 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 31: /* h4: H4_OPEN text H4_CLOSE  */
-#line 161 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-                          {
-        (yyval.domNode) = new DOMNode(H4, (yyvsp[-1].text));  // Text inside h2
-    }
-#line 1412 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 32: /* h5: H5_OPEN text H5_CLOSE  */
+  case 29: /* h4: H4_OPEN text H4_CLOSE  */
 #line 167 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                           {
-        (yyval.domNode) = new DOMNode(H5, (yyvsp[-1].text));  // Text inside h2
-    }
-#line 1420 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 33: /* nav: NAV_OPEN body_content NAV_CLOSE  */
-#line 174 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-                                    {
-        (yyval.domNode) = new DOMNode(NAV);
-        (yyval.domNode)->appendChildren(*(yyvsp[-1].domNodeList));  // Content inside nav
-    }
-#line 1429 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
-    break;
-
-  case 34: /* unordered_list: UL_OPEN unordered_list_content UL_CLOSE  */
-#line 190 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-                                            {
-        (yyval.domNode) = new DOMNode(UL);
-        (yyval.domNode)->appendChildren(*(yyvsp[-1].domNodeList));  // List items inside ul
+        (yyval.domNode) = new DOMNode(H4, (yyvsp[-1].text));  // Text inside h2
     }
 #line 1438 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 35: /* unordered_list_content: list_item  */
-#line 198 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-              { (yyval.domNodeList) = new DOMNodeList(); (yyval.domNodeList)->push_back((yyvsp[0].domNode)); }
-#line 1444 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+  case 30: /* h5: H5_OPEN text H5_CLOSE  */
+#line 173 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                          {
+        (yyval.domNode) = new DOMNode(H5, (yyvsp[-1].text));  // Text inside h2
+    }
+#line 1446 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 36: /* unordered_list_content: unordered_list_content list_item  */
-#line 199 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
-                                       { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
-#line 1450 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+  case 31: /* nav: NAV_OPEN body_content NAV_CLOSE  */
+#line 180 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                                    {
+        (yyval.domNode) = new DOMNode(NAV);
+        (yyval.domNode)->appendChildren(*(yyvsp[-1].domNodeList));  // Content inside nav
+    }
+#line 1455 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 37: /* list_item: LI_OPEN text LI_CLOSE  */
+  case 32: /* header: HEADER_OPEN body_content HEADER_CLOSE  */
+#line 188 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                                          {
+        (yyval.domNode) = new DOMNode(HEADER);
+        (yyval.domNode)->appendChildren(*(yyvsp[-1].domNodeList));  // Content inside header
+    }
+#line 1464 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 33: /* unordered_list: UL_OPEN unordered_list_content UL_CLOSE  */
+#line 196 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                                            {
+        (yyval.domNode) = new DOMNode(UL);
+        (yyval.domNode)->appendChildren(*(yyvsp[-1].domNodeList));  // List items inside ul
+    }
+#line 1473 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 34: /* unordered_list_content: list_item  */
 #line 204 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+              { (yyval.domNodeList) = new DOMNodeList(); (yyval.domNodeList)->push_back((yyvsp[0].domNode)); }
+#line 1479 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 35: /* unordered_list_content: unordered_list_content list_item  */
+#line 205 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                                       { (yyvsp[-1].domNodeList)->push_back((yyvsp[0].domNode)); (yyval.domNodeList) = (yyvsp[-1].domNodeList); }
+#line 1485 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 36: /* list_item: LI_OPEN text LI_CLOSE  */
+#line 210 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
                           {
         (yyval.domNode) = new DOMNode(LI, (yyvsp[-1].text));  // Text inside list item
     }
-#line 1458 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1493 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
-  case 38: /* text: TEXT  */
-#line 211 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+  case 37: /* section: SECTION_OPEN body_content SECTION_CLOSE  */
+#line 217 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                                            {
+        (yyval.domNode) = new DOMNode(SECTION);
+        (yyval.domNode)->appendChildren(*(yyvsp[-1].domNodeList));  // Content inside section
+    }
+#line 1502 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 38: /* strong: STRONG_OPEN text STRONG_CLOSE  */
+#line 225 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                                  {
+        (yyval.domNode) = new DOMNode(STRONG, (yyvsp[-1].text));  // Text inside strong (bold)
+    }
+#line 1510 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 39: /* em: EM_OPEN text EM_CLOSE  */
+#line 232 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                          {
+        (yyval.domNode) = new DOMNode(EM, (yyvsp[-1].text));  // Text inside em (italic)
+    }
+#line 1518 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 40: /* u: U_OPEN text U_CLOSE  */
+#line 239 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                        {
+        (yyval.domNode) = new DOMNode(U, (yyvsp[-1].text));  // Text inside u (underline)
+    }
+#line 1526 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 41: /* small: SMALL_OPEN text SMALL_CLOSE  */
+#line 246 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                                {
+        (yyval.domNode) = new DOMNode(SMALL, (yyvsp[-1].text));  // Text inside small (smaller font)
+    }
+#line 1534 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 42: /* blockquote: BLOCKQUOTE_OPEN text BLOCKQUOTE_CLOSE  */
+#line 253 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+                                          {
+        (yyval.domNode) = new DOMNode(BLOCK_QUOTE, (yyvsp[-1].text));  // Create a DOMNode for blockquote with its text content
+    }
+#line 1542 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+    break;
+
+  case 43: /* text: TEXT  */
+#line 261 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
          {
         (yyval.text) = strdup((yyvsp[0].text));  // Return raw text
     }
-#line 1466 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1550 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
     break;
 
 
-#line 1470 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
+#line 1554 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.cpp"
 
       default: break;
     }
@@ -1659,5 +1743,5 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 216 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
+#line 266 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/parser.y"
 

@@ -1,5 +1,6 @@
 
 #include "dom_creater.h"
+#include "dom_tree.h"
 
 using namespace std;
 

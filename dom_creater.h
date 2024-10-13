@@ -8,8 +8,11 @@
     #include <QWidget>
     #include <QListWidget>
     #include <QTabWidget>
+    #include <string>
+    #include <cstdlib>
     #include "dom_tree.h"
     DOMNode* dom_creater_main(char*);
+    DOMNode* dom_creater_string(const std::string& input);
 
     void renderDOMNode(DOMNode* node, QVBoxLayout* layout);
     void renderDOMTree(DOMNode* root, QVBoxLayout* layout);

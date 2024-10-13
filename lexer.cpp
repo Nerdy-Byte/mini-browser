@@ -1,6 +1,6 @@
-#line 1 "lexer.cpp"
+#line 1 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/lexer.cpp"
 
-#line 3 "lexer.cpp"
+#line 3 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/lexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -626,8 +626,8 @@ char *yytext;
 #include <cstring>
 #include <stack>
 #include <string>
-#include "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/dom_tree.h"
-#include "parser.tab.h"
+#include "../../dom_tree.h"
+#include "parser.hpp"
 using namespace std;
 stack<string> prev_state;
 #line 633 "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/lexer.cpp"
@@ -923,288 +923,288 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 24 "lex.l"
-{ prev_state.push("initial"); return DOCTYPE; }
+{printf("Token: DOCTYPE\n"); prev_state.push("initial"); return DOCTYPE; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 25 "lex.l"
-{ BEGIN(HTML); return HTML_OPEN; }
+{printf("Token: HTML_OPEN\n"); BEGIN(HTML); return HTML_OPEN; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 26 "lex.l"
-{ BEGIN(INITIAL); return HTML_CLOSE; }
+{printf("Token: HTML_CLOSE\n"); BEGIN(INITIAL); return HTML_CLOSE; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 29 "lex.l"
-{ BEGIN(HEAD); prev_state.push("head"); return HEAD_OPEN; }
+{printf("Token: HEAD_OPEN\n"); BEGIN(HEAD); prev_state.push("head"); return HEAD_OPEN; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 30 "lex.l"
-{ BEGIN(HTML); return HEAD_CLOSE; }
+{printf("Token: HEAD_CLOSE\n"); BEGIN(HTML); return HEAD_CLOSE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 31 "lex.l"
-{ return TITLE_OPEN; }
+{printf("Token: TITLE_OPEN\n"); return TITLE_OPEN; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 32 "lex.l"
-{ return TITLE_CLOSE; }
+{printf("Token: TITLE_CLOSE\n"); return TITLE_CLOSE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 35 "lex.l"
-{ BEGIN(BODY); return BODY_OPEN; }
+{printf("Token: BODY_OPEN\n"); BEGIN(BODY); return BODY_OPEN; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 36 "lex.l"
-{ BEGIN(HTML); return BODY_CLOSE; }
+{printf("Token: BODY_CLOSE\n"); BEGIN(HTML); return BODY_CLOSE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 37 "lex.l"
-{ return NAV_OPEN; }
+{printf("Token: NAV_OPEN\n"); return NAV_OPEN; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 38 "lex.l"
-{ return NAV_CLOSE; }
+{printf("Token: NAV_CLOSE\n"); return NAV_CLOSE; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 39 "lex.l"
-{ return HEADER_OPEN; }
+{printf("Token: HEADER_OPEN\n"); return HEADER_OPEN; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 40 "lex.l"
-{ return HEADER_CLOSE; }
+{printf("Token: HEADER_CLOSE\n"); return HEADER_CLOSE; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 41 "lex.l"
-{ return FOOTER_OPEN; }
+{printf("Token: FOOTER_OPEN\n"); return FOOTER_OPEN; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 42 "lex.l"
-{ return FOOTER_CLOSE; }
+{printf("Token: FOOTER_CLOSE\n"); return FOOTER_CLOSE; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 43 "lex.l"
-{ return SECTION_OPEN; }
+{printf("Token: SECTION_OPEN\n"); return SECTION_OPEN; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 44 "lex.l"
-{ return SECTION_CLOSE; }
+{printf("Token: SECTION_CLOSE\n"); return SECTION_CLOSE; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 45 "lex.l"
-{ return ARTICLE_OPEN; }
+{printf("Token: ARTICLE_OPEN\n"); return ARTICLE_OPEN; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 46 "lex.l"
-{ return ARTICLE_CLOSE; }
+{printf("Token: ARTICLE_CLOSE\n"); return ARTICLE_CLOSE; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 47 "lex.l"
-{ return ASIDE_OPEN; }
+{printf("Token: ASIDE_OPEN\n"); return ASIDE_OPEN; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 48 "lex.l"
-{ return ASIDE_CLOSE; }
+{printf("Token: ASIDE_CLOSE\n"); return ASIDE_CLOSE; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 51 "lex.l"
-{ return UL_OPEN; }
+{printf("Token: UL_OPEN\n"); return UL_OPEN; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 52 "lex.l"
-{ return UL_CLOSE; }
+{printf("Token: UL_CLOSE\n"); return UL_CLOSE; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 53 "lex.l"
-{ return OL_OPEN; }
+{printf("Token: OL_OPEN\n"); return OL_OPEN; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 54 "lex.l"
-{ return OL_CLOSE; }
+{printf("Token: OL_CLOSE\n"); return OL_CLOSE; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 55 "lex.l"
-{ return LI_OPEN; }
+{printf("Token: LI_OPEN\n"); return LI_OPEN; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 56 "lex.l"
-{ return LI_CLOSE; }
+{printf("Token: LI_CLOSE\n"); return LI_CLOSE; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 59 "lex.l"
-{ return A_OPEN; }
+{printf("Token: A_OPEN\n"); return A_OPEN; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 60 "lex.l"
-{ return A_CLOSE; }
+{printf("Token: A_CLOSE\n"); return A_CLOSE; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 61 "lex.l"
-{ return STRONG_OPEN; }
+{printf("Token: STRONG_OPEN\n"); return STRONG_OPEN; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 62 "lex.l"
-{ return STRONG_CLOSE; }
+{printf("Token: STRONG_CLOSE\n"); return STRONG_CLOSE; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 63 "lex.l"
-{ return EM_OPEN; }
+{printf("Token: EM_OPEN\n"); return EM_OPEN; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 64 "lex.l"
-{ return EM_CLOSE; }
+{printf("Token: EM_CLOSE\n"); return EM_CLOSE; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 65 "lex.l"
-{ return U_OPEN; }
+{printf("Token: U_OPEN\n"); return U_OPEN; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 66 "lex.l"
-{ return U_CLOSE; }
+{printf("Token: U_CLOSE\n"); return U_CLOSE; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 67 "lex.l"
-{ return SMALL_OPEN; }
+{printf("Token: SMALL_OPEN\n"); return SMALL_OPEN; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 68 "lex.l"
-{ return SMALL_CLOSE; }
+{printf("Token: SMALL_CLOSE\n"); return SMALL_CLOSE; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 71 "lex.l"
-{ return BLOCKQUOTE_OPEN; }
+{printf("Token: BLOCKQUOTE_OPEN\n"); return BLOCKQUOTE_OPEN; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 72 "lex.l"
-{ return BLOCKQUOTE_CLOSE; }
+{printf("Token: BLOCKQUOTE_CLOSE\n"); return BLOCKQUOTE_CLOSE; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 73 "lex.l"
-{ return PRE_OPEN; }
+{printf("Token: PRE_OPEN\n"); return PRE_OPEN; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 74 "lex.l"
-{ return PRE_CLOSE; }
+{printf("Token: PRE_CLOSE\n"); return PRE_CLOSE; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 75 "lex.l"
-{ return CODE_OPEN; }
+{printf("Token: CODE_OPEN\n"); return CODE_OPEN; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
 #line 76 "lex.l"
-{ return CODE_CLOSE; }
+{printf("Token: CODE_CLOSE\n"); return CODE_CLOSE; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 79 "lex.l"
-{ BEGIN(PARA); return P_OPEN; }
+{printf("Token: P_OPEN\n"); BEGIN(PARA); return P_OPEN; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
 #line 80 "lex.l"
-{ BEGIN(BODY); return P_CLOSE; }
+{printf("Token: P_CLOSE\n"); BEGIN(BODY); return P_CLOSE; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
 #line 81 "lex.l"
-{ BEGIN(H1); return H1_OPEN; }
+{printf("Token: H1_OPEN\n"); BEGIN(H1); return H1_OPEN; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
 #line 82 "lex.l"
-{ BEGIN(BODY); return H1_CLOSE; }
+{printf("Token: H1_CLOSE\n"); BEGIN(BODY); return H1_CLOSE; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
 #line 83 "lex.l"
-{ return H2_OPEN; }
+{printf("Token: H2_OPEN\n"); return H2_OPEN; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
 #line 84 "lex.l"
-{ return H2_CLOSE; }
+{printf("Token: H2_CLOSE\n"); return H2_CLOSE; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
 #line 85 "lex.l"
-{ return H3_OPEN; }
+{printf("Token: H3_OPEN\n"); return H3_OPEN; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
 #line 86 "lex.l"
-{ return H3_CLOSE; }
+{printf("Token: H3_CLOSE\n"); return H3_CLOSE; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
 #line 87 "lex.l"
-{ return H4_OPEN; }
+{printf("Token: H4_OPEN\n"); return H4_OPEN; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
 #line 88 "lex.l"
-{ return H4_CLOSE; }
+{printf("Token: H4_CLOSE\n"); return H4_CLOSE; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
 #line 89 "lex.l"
-{ return H5_OPEN; }
+{printf("Token: H5_OPEN\n"); return H5_OPEN; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
 #line 90 "lex.l"
-{ return H5_CLOSE; }
+{printf("Token: H5_CLOSE\n"); return H5_CLOSE; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
 #line 93 "lex.l"
-{ return IMG_TAG; }
+{printf("Token: IMG_TAG\n"); return IMG_TAG; }
 	YY_BREAK
 case 58:
 /* rule 58 can match eol */
 YY_RULE_SETUP
 #line 96 "lex.l"
-{ yylval.text = strdup(yytext); return TEXT; }
+{printf("Token: TEXT\n"); yylval.text = strdup(yytext); return TEXT; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
