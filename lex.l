@@ -4,7 +4,7 @@
 #include <cstring>
 #include <stack>
 #include <string>
-#include "dom_tree.h"
+#include "../../dom_tree.h"
 #include "parser.hpp"
 using namespace std;
 stack<string> prev_state;

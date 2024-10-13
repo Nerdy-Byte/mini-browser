@@ -46,6 +46,7 @@
             input.html
             dom_tree.h
             lex.l parser.y
+            renderer.cpp
         )
     # Define target properties for Android with Qt 6 as:
     #    set_property(TARGET untitled APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
