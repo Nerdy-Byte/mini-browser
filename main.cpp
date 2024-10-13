@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
     QWidget window;
     window.setWindowTitle("DOM Browser");
     window.resize(700, 700);
-    DOMNode* root = dom_creater_main();
+    DOMNode* root = dom_creater_main("/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/input.html");
 
     if (root == nullptr) {
         std::cerr << "Error: DOM root is null." << std::endl;

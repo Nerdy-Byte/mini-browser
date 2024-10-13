@@ -45,8 +45,8 @@ extern FILE *yyin;
 //     outputFile.close();
 // }
 
-DOMNode* dom_creater_main() {
-    const char* filename = "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/input.html";
+DOMNode* dom_creater_main(char* filename) {
+    // const char* filename = "/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/input.html";
     yyin = fopen(filename, "r");
 
     if (!yyin) {
