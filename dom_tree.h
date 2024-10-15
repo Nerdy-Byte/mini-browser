@@ -73,7 +73,7 @@ inline std::string tagTypeToString(TagType tagType) {
     case TagType::LI: return "li";
     case TagType::HEADER: return "header";
     case TagType::FOOTER: return "footer";
-
+    case TagType::CODE: return "code";
 
     default: return "unknown";
     }
@@ -110,7 +110,7 @@ inline TagType getTagType(const std::string& tagName) {
     if (tagName == "header") return TagType::HEADER;
     if (tagName == "footer") return TagType::FOOTER;
     if (tagName == "root") return TagType::ROOT;
-
+    if (tagName == "code") return TagType::CODE;
     return TagType::ERROR;
 }
 

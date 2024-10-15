@@ -118,6 +118,26 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
 
     }
 
+    case TagType::OL: {
+        QListWidget* listWidget = new QListWidget();
+        listWidget->setUniformItemSizes(true);
+        layout->addWidget(listWidget);
+
+        int itemNumber = 1;
+        for (DOMNode* child : node->getChildren()) {
+            TagType childTagType = getTagType(child->getName());
+            if (childTagType == TagType::LI) {
+                QString numberedItem = QString::number(itemNumber) + ". " + QString::fromStdString(child->getTextContent());
+                QListWidgetItem* item = new QListWidgetItem(numberedItem);
+                listWidget->addItem(item);
+                itemNumber++;
+            } else {
+                cout << "ERROR: Expected <li> in <ol>, but found: " << child->getName() << endl;
+            }
+        }
+        return;
+    }
+
     case TagType::HEADER: {
         QLabel* headerLabel = new QLabel("Header:");
         layout->addWidget(headerLabel);
@@ -179,6 +199,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
         layout->addWidget(smallLabel);
         return;
     }
+
     case TagType::BLOCK_QUOTE: {
         QTextEdit* blockquoteDisplay = new QTextEdit();
         blockquoteDisplay->setReadOnly(true);
@@ -192,6 +213,23 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
         return;
     }
 
+    case TagType::PRE: {
+        QTextEdit* textEdit = new QTextEdit();
+        textEdit->setReadOnly(true);
+        textEdit->setFontFamily("Courier");
+        textEdit->setText(QString::fromStdString(node->getTextContent()));
+        layout->addWidget(textEdit);
+        return;
+    }
+
+    case TagType::CODE: {
+        QLabel* codeLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+        QFont monospaceFont("Monospace");
+        monospaceFont.setStyleHint(QFont::TypeWriter);
+        codeLabel->setFont(monospaceFont);
+        layout->addWidget(codeLabel);
+        return;
+    }
 
     default:
         cout << "ERROR: Unknown tag type: " << node->getName() << endl;

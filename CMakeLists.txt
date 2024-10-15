@@ -47,6 +47,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         input.html
         renderer.cpp
         pages.h
+        lex.l parser.y
     )
 else()
     if(ANDROID)

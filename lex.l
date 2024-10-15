@@ -90,7 +90,7 @@ stack<string> prev_state;
 <BODY>"</h5>"                {printf("Token: H5_CLOSE\n"); return H5_CLOSE; }
 
 
-<BODY>"<img[^>]*>"           {printf("Token: IMG_TAG\n"); return IMG_TAG; }
+<BODY>"<img[^>]*>"           {printf("Token: IMG_TAG\n"); yylval.text = strdup(yytext); cout<< yytext; return IMG_TAG; }
 
 
 <*>[^<>]+                    {printf("Token: TEXT\n"); yylval.text = strdup(yytext); return TEXT; }

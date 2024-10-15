@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
     QWidget window;
     window.setWindowTitle("DOM Browser");
-    window.resize(700, 700);
+    window.resize(900, 900);
 
     DOMNode* root = dom_creater_main("/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/input.html"); //modify to your input.html file path
 

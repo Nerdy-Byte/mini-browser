@@ -52,9 +52,9 @@
 
 
 
-%type <domNode> html head title body div paragraph h1 h2 h3 h4 h5 nav header list_item unordered_list section strong em u small
-%type <domNode> blockquote
-%type <domNodeList> body_content unordered_list_content
+%type <domNode> html head title body div paragraph h1 h2 h3 h4 h5 nav header list_item unordered_list ordered_list section strong em u small
+%type <domNode> blockquote pre code
+%type <domNodeList> body_content unordered_list_content ordered_list_content
 %type <text> text
 
 %%
@@ -117,6 +117,7 @@ body_content:
     | body_content nav { $1->push_back($2); $$ = $1; }
     | body_content header { $1->push_back($2); $$ = $1; }
     | body_content unordered_list { $1->push_back($2); $$ = $1; }
+    | body_content ordered_list { $1->push_back($2); $$ = $1; }
     | body_content section { $1->push_back($2); $$ = $1; }
     | body_content div { $1->push_back($2); $$ = $1; }
     | body_content strong { $1->push_back($2); $$ = $1; }
@@ -124,6 +125,8 @@ body_content:
     | body_content u { $1->push_back($2); $$ = $1; }
     | body_content small { $1->push_back($2); $$ = $1; }
     | body_content blockquote { $1->push_back($2); $$ = $1; }
+    | body_content pre { $1->push_back($2); $$ = $1; }
+    | body_content code { $1->push_back($2); $$ = $1; }
 ;
 
 
@@ -199,8 +202,23 @@ unordered_list:
     }
 ;
 
+//Ordered list structure (ul)
+ordered_list:
+    OL_OPEN ordered_list_content OL_CLOSE {
+        $$ = new DOMNode(OL);
+        $$->appendChildren(*$2);  // List items inside ol
+    }
+;
+
+
 // Unordered list content
 unordered_list_content:
+    list_item { $$ = new DOMNodeList(); $$->push_back($1); }
+    | unordered_list_content list_item { $1->push_back($2); $$ = $1; }
+;
+
+//ordered list content
+ordered_list_content:
     list_item { $$ = new DOMNodeList(); $$->push_back($1); }
     | unordered_list_content list_item { $1->push_back($2); $$ = $1; }
 ;
@@ -256,11 +274,27 @@ blockquote:
 ;
 
 
+// Preformatted text (pre) structure
+pre:
+    PRE_OPEN text PRE_CLOSE {
+        $$ = new DOMNode(PRE, $2);  // Create a DOMNode for pre with its text content
+    }
+;
+
+// Code structure
+code:
+    CODE_OPEN text CODE_CLOSE {
+        $$ = new DOMNode(CODE, $2);  // Text inside code
+    }
+;
+
+
 // Text structure
 text:
     TEXT {
         $$ = strdup($1);  // Return raw text
     }
 ;
+
 
 %%
