@@ -23,7 +23,7 @@
 
 %start start
 
-%token <text> TEXT
+%token <text> TEXT SRC_TOK ALT_TOK
 %token DOCTYPE HTML_OPEN HTML_CLOSE
 %token HEAD_OPEN HEAD_CLOSE
 %token TITLE_OPEN TITLE_CLOSE
@@ -48,12 +48,12 @@
 %token PRE_OPEN PRE_CLOSE
 %token BLOCKQUOTE_OPEN  BLOCKQUOTE_CLOSE
 %token CODE_OPEN CODE_CLOSE
-%token IMG_TAG
+%token IMG_TAG IMG_CLOSE
 
 
 
 %type <domNode> html head title body div paragraph h1 h2 h3 h4 h5 nav header list_item unordered_list ordered_list section strong em u small
-%type <domNode> blockquote pre code
+%type <domNode> blockquote pre code img
 %type <domNodeList> body_content unordered_list_content ordered_list_content
 %type <text> text
 
@@ -127,6 +127,7 @@ body_content:
     | body_content blockquote { $1->push_back($2); $$ = $1; }
     | body_content pre { $1->push_back($2); $$ = $1; }
     | body_content code { $1->push_back($2); $$ = $1; }
+    | body_content img { $1->push_back($2); $$ = $1; }
 ;
 
 
@@ -285,6 +286,24 @@ pre:
 code:
     CODE_OPEN text CODE_CLOSE {
         $$ = new DOMNode(CODE, $2);  // Text inside code
+    }
+;
+
+//image tag
+img:
+    IMG_TAG SRC_TOK TEXT ALT_TOK TEXT IMG_CLOSE {
+        $$ = new DOMNode(IMG);
+
+        // Create DOMNode for src and alt
+        DOMNode* srcNode = new DOMNode(SRC, $3);
+        DOMNode* altNode = new DOMNode(ALT, $5);
+
+        // Append children using vector
+        std::vector<DOMNode*> children;
+        children.push_back(srcNode);
+        children.push_back(altNode);
+
+        $$->appendChildren(children);
     }
 ;
 

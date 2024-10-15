@@ -15,10 +15,17 @@ stack<string> prev_state;
 %x HEAD
 %x PARA
 %x H1
+%x IMG
+%x COMMENT
 
 %%
 
-<*>[ \t\n]+                        { ; }
+<*>[ \t\n]+                 { ; }
+<BODY,INITIAL>"<!--"        { BEGIN(COMMENT); /* Switch to comment mode */ }
+<COMMENT>"-->"              { BEGIN(BODY); /* End of comment, return to normal mode */ }
+<COMMENT>[^\-]+             { /* Ignore comment content, can capture if needed */ }
+<COMMENT>"-"                { /* Ignore stray dashes within comments */ }
+
 
 
 <INITIAL>"<!DOCTYPE html>"   {printf("Token: DOCTYPE\n"); prev_state.push("initial"); return DOCTYPE; }
@@ -90,7 +97,12 @@ stack<string> prev_state;
 <BODY>"</h5>"                {printf("Token: H5_CLOSE\n"); return H5_CLOSE; }
 
 
-<BODY>"<img[^>]*>"           {printf("Token: IMG_TAG\n"); yylval.text = strdup(yytext); cout<< yytext; return IMG_TAG; }
+<BODY>"<img"                { cout<<"IMG"<<endl; BEGIN(IMG); return IMG_TAG; }
+<IMG>"src="                 { cout<<"IMG"<<endl; yylval.text = strdup(yytext); return SRC_TOK; }
+<IMG>"alt="                 { cout<<"IMG"<<endl; yylval.text = strdup(yytext); return ALT_TOK; }
+<IMG>">"                    { cout<<"IMG"<<endl; BEGIN(BODY); return IMG_CLOSE; }
+
+
 
 
 <*>[^<>]+                    {printf("Token: TEXT\n"); yylval.text = strdup(yytext); return TEXT; }
