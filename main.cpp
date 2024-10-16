@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
     window.setWindowTitle("DOM Browser");
     window.resize(900, 900);
 
-    DOMNode* root = dom_creater_main("/Users/divyanshudwivedi2018gmail.com/Desktop/SSL/untitled/input.html"); //modify to your input.html file path
+    DOMNode* root = dom_creater_main("../input.html"); //modify to your input.html file path
 
     if (root == nullptr) {
         std::cerr << "Error: DOM root is null." << std::endl;

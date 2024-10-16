@@ -4,7 +4,7 @@
 #include <cstring>
 #include <stack>
 #include <string>
-#include "../../dom_tree.h"
+#include "../dom_tree.h"
 #include "parser.hpp"
 using namespace std;
 stack<string> prev_state;
@@ -16,6 +16,7 @@ stack<string> prev_state;
 %x PARA
 %x H1
 %x IMG
+%x ANCHOR
 %x COMMENT
 
 %%
@@ -62,9 +63,6 @@ stack<string> prev_state;
 <BODY>"<li>"                 {printf("Token: LI_OPEN\n"); return LI_OPEN; }
 <BODY>"</li>"                {printf("Token: LI_CLOSE\n"); return LI_CLOSE; }
 
-
-<BODY>"<a>"                  {printf("Token: A_OPEN\n"); return A_OPEN; }
-<BODY>"</a>"                 {printf("Token: A_CLOSE\n"); return A_CLOSE; }
 <BODY>"<strong>"             {printf("Token: STRONG_OPEN\n"); return STRONG_OPEN; }
 <BODY>"</strong>"            {printf("Token: STRONG_CLOSE\n"); return STRONG_CLOSE; }
 <BODY>"<em>"                 {printf("Token: EM_OPEN\n"); return EM_OPEN; }
@@ -95,6 +93,12 @@ stack<string> prev_state;
 <BODY>"</h4>"                {printf("Token: H4_CLOSE\n"); return H4_CLOSE; }
 <BODY>"<h5>"                 {printf("Token: H5_OPEN\n"); return H5_OPEN; }
 <BODY>"</h5>"                {printf("Token: H5_CLOSE\n"); return H5_CLOSE; }
+
+
+<BODY>"<a"                  {printf("Token: A_OPEN\n"); BEGIN(ANCHOR); return A_OPEN; }
+<ANCHOR>"href=\""            { yylval.text = strdup(yytext); return HREF_TOK; }  // Capture href attribute
+<ANCHOR>"\">|'"              { printf("Token: A_CLOSE\n"); BEGIN(BODY); return A_CLOSE; }  // End of the <a> tag
+<BODY>"</a>"                {printf("Token: A_CLOSE\n"); return A_CLOSE; }
 
 
 <BODY>"<img"                { cout<<"IMG"<<endl; BEGIN(IMG); return IMG_TAG; }

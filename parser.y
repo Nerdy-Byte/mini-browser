@@ -1,6 +1,6 @@
 %{
     #include <cstring>
-    #include "../../dom_tree.h"
+    #include "../dom_tree.h"
     #include "parser.hpp"
 
     extern int yylex();
@@ -23,7 +23,7 @@
 
 %start start
 
-%token <text> TEXT SRC_TOK ALT_TOK
+%token <text> TEXT SRC_TOK ALT_TOK HREF_TOK
 %token DOCTYPE HTML_OPEN HTML_CLOSE
 %token HEAD_OPEN HEAD_CLOSE
 %token TITLE_OPEN TITLE_CLOSE
@@ -40,7 +40,7 @@
 %token ARTICLE_OPEN ARTICLE_CLOSE
 %token ASIDE_OPEN ASIDE_CLOSE
 %token OL_OPEN OL_CLOSE
-%token A_OPEN A_CLOSE
+%token A_OPEN A_CLOSE   
 %token STRONG_OPEN STRONG_CLOSE
 %token EM_OPEN EM_CLOSE
 %token U_OPEN U_CLOSE
@@ -53,7 +53,7 @@
 
 
 %type <domNode> html head title body div paragraph h1 h2 h3 h4 h5 nav header list_item unordered_list ordered_list section strong em u small
-%type <domNode> blockquote pre code img
+%type <domNode> blockquote pre code img article aside footer anchor
 %type <domNodeList> body_content unordered_list_content ordered_list_content
 %type <text> text
 
@@ -128,6 +128,11 @@ body_content:
     | body_content pre { $1->push_back($2); $$ = $1; }
     | body_content code { $1->push_back($2); $$ = $1; }
     | body_content img { $1->push_back($2); $$ = $1; }
+    | body_content article { $1->push_back($2); $$ = $1; }
+    | body_content aside { $1->push_back($2); $$ = $1; }
+    | body_content footer { $1->push_back($2); $$ = $1; }
+    | body_content anchor { $1->push_back($2); $$ = $1; }
+
 ;
 
 
@@ -306,6 +311,40 @@ img:
         $$->appendChildren(children);
     }
 ;
+
+// Article structure
+article:
+    ARTICLE_OPEN body_content ARTICLE_CLOSE {
+        $$ = new DOMNode(ARTICLE);
+        $$->appendChildren(*$2);  
+    }
+;
+
+// Aside structure
+aside:
+    ASIDE_OPEN body_content ASIDE_CLOSE {
+        $$ = new DOMNode(ASIDE);
+        $$->appendChildren(*$2);  
+    }
+;
+
+// Footer structure
+footer:
+    FOOTER_OPEN body_content FOOTER_CLOSE {
+        $$ = new DOMNode(ASIDE);
+        $$->appendChildren(*$2);  
+    }
+;
+
+// Anchor structure
+
+anchor:
+    A_OPEN HREF_TOK text A_CLOSE {
+        $$ = new DOMNode(A, $3);  // Text inside anchor
+        $$->setAttribute("href", $2);  // Set the href attribute
+    }
+;
+
 
 
 // Text structure

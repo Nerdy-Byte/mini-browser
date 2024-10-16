@@ -62,7 +62,7 @@ inline std::string tagTypeToString(TagType tagType) {
     case TagType::SECTION: return "section";
     case TagType::EM: return "em";
     case TagType::ARTICLE: return "article";
-    case TagType::ASIDE: return "side";
+    case TagType::ASIDE: return "aside";
     case TagType::IMG: return "img";
     case TagType::A: return "a";
     case TagType::STRONG: return "strong";

@@ -231,6 +231,63 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
         return;
     }
 
+    case TagType::ARTICLE: {
+        QLabel* articleLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+        layout->addWidget(articleLabel);
+        for (DOMNode* child : node->getChildren()) {
+            renderDOMNode(child, layout); 
+        }
+        return;
+    }
+
+    case TagType::ASIDE: {
+        QLabel* asideLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+        layout->addWidget(asideLabel);
+        for (DOMNode* child : node->getChildren()) {
+            renderDOMNode(child, layout); 
+        }
+        return;
+    }
+
+    case TagType::FOOTER: {
+        QLabel* footerLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+        layout->addWidget(footerLabel);
+        for (DOMNode* child : node->getChildren()) {
+            renderDOMNode(child, layout); 
+        }
+        return;
+    }
+
+    case TagType::A: {
+    // Extract the href attribute from the DOM node
+    QString href = QString::fromStdString(node->getAttribute("href"));
+
+    // Create a clickable label for the anchor
+    QLabel* anchorLabel = new QLabel("<a href=\"" + href + "\">" + QString::fromStdString(node->getTextContent()) + "</a>");
+    
+    // Enable interaction for hyperlinks and open them externally
+    anchorLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
+    anchorLabel->setOpenExternalLinks(true);
+    
+    // Add the label to the layout
+    layout->addWidget(anchorLabel);
+    
+    return;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     default:
         cout << "ERROR: Unknown tag type: " << node->getName() << endl;
         return;

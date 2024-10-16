@@ -36,6 +36,7 @@ set(PROJECT_SOURCES
     dom_creater.h
     dom_creater.cpp
     dom_tree.h
+    renderer.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp   # Generated Bison parser
     ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp    # Generated Flex lexer
 )
