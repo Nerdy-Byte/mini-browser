@@ -121,15 +121,18 @@ stack<string> prev_state;
 <BODY>"</a>"                {printf("Token: A_CLOSE\n"); return A_CLOSE; }
 
 
-<BODY>"<img"                { cout<<"IMG"<<endl; BEGIN(IMG); return IMG_TAG; }
-<IMG>"src="                 { cout<<"IMG"<<endl; yylval.text = strdup(yytext); return SRC_TOK; }
-<IMG>"alt="                 { cout<<"IMG"<<endl; yylval.text = strdup(yytext); return ALT_TOK; }
-<IMG>">"                    { cout<<"IMG"<<endl; BEGIN(BODY); return IMG_CLOSE; }
+<BODY>"<img"[ \t\n]*         {printf("Token: IMG_OPEN\n"); BEGIN(IMG); return IMG_OPEN;}
+
+<IMG>[^>]+ {
+    printf("Token: IMG_CONTENT with value: %s\n", yytext);
+    yylval.text = strdup(yytext);  // Capture the entire content between <img and >
+    return TEXT;
+}
+
+<IMG>">"                     {printf("Token: IMG_CLOSE\n"); BEGIN(BODY); return IMG_CLOSE; }
 
 
-
-
-<*>[^<>]+                    {printf("Token: TEXT\n"); yylval.text = strdup(yytext); return TEXT; }
+<*>[^<>]+                    {printf("Token: TEXT %s\n",yytext); yylval.text = strdup(yytext); return TEXT; }
 
 
 .                            { ; }

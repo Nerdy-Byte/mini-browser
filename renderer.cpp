@@ -1,4 +1,3 @@
-
 #include "dom_creater.h"
 #include "dom_tree.h"
 #include <QDesktopServices>
@@ -6,9 +5,16 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QLabel>
+#include <QPixmap>
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <iostream>
+
+
+#include <QPixmap>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QEventLoop>
 
 using namespace std;
 
@@ -301,18 +307,52 @@ case TagType::A: {
             return;
         }
 
+case TagType::IMG: {
+    QString imgTag = QString::fromStdString(node->getTextContent());
 
+    // Extract src
+    int srcStart = imgTag.indexOf("src=\"") + 5;
+    int srcEnd = imgTag.indexOf("\"", srcStart);
+    QString src = srcStart > 4 ? imgTag.mid(srcStart, srcEnd - srcStart) : "";
 
+    // Extract alt
+    int altStart = imgTag.indexOf("alt=\"") + 5;
+    int altEnd = imgTag.indexOf("\"", altStart);
+    QString alt = altStart > 4 ? imgTag.mid(altStart, altEnd - altStart) : "No alt text";
 
+    QLabel* imageLabel = new QLabel();
+    QPixmap pixmap;
 
+    // Load the image using the src
+    if (src.startsWith("http://") || src.startsWith("https://")) {
+        // For network images
+        QNetworkAccessManager manager;
+        QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(src)));
+        QEventLoop loop;
+        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();
+        
+        if (reply->error() == QNetworkReply::NoError) {
+            pixmap.loadFromData(reply->readAll());
+        }
+        reply->deleteLater();
+    } else {
+        // Load from a local file
+        pixmap.load(src);
+    }
 
-
-
-
-
-
-
-
+    if (pixmap.isNull()) {
+        // If loading failed, display alt text or a placeholder
+        QLabel* errorLabel = new QLabel(alt.isEmpty() ? "Image not found" : alt);
+        errorLabel->setStyleSheet("background-color: #f0f0f0; padding: 5px; border: 1px solid #ccc;");
+        layout->addWidget(errorLabel);
+    } else {
+        imageLabel->setPixmap(pixmap.scaled(400, 300, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        imageLabel->setToolTip(alt);
+        layout->addWidget(imageLabel);
+    }
+    return;
+}
 
 
     default:

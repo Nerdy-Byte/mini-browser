@@ -11,8 +11,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+# Add Network along with Widgets
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 
 # Find the libcurl package
 find_package(CURL REQUIRED)
@@ -62,8 +63,8 @@ else()
     endif()
 endif()
 
-# Link the Qt Widgets and Curl libraries
-target_link_libraries(untitled PRIVATE Qt${QT_VERSION_MAJOR}::Widgets CURL::libcurl)
+# Link the Qt Widgets, Network, and Curl libraries
+target_link_libraries(untitled PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network CURL::libcurl)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 if(${QT_VERSION} VERSION_LESS 6.1.0)

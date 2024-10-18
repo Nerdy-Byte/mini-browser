@@ -23,7 +23,7 @@
 
 %start start
 
-%token <text> TEXT SRC_TOK ALT_TOK HREF_TOK
+%token <text> TEXT HREF_TOK
 %token DOCTYPE HTML_OPEN HTML_CLOSE
 %token HEAD_OPEN HEAD_CLOSE
 %token TITLE_OPEN TITLE_CLOSE
@@ -48,7 +48,7 @@
 %token PRE_OPEN PRE_CLOSE
 %token BLOCKQUOTE_OPEN  BLOCKQUOTE_CLOSE
 %token CODE_OPEN CODE_CLOSE
-%token IMG_TAG IMG_CLOSE
+%token IMG_OPEN IMG_CLOSE IMG_SELF_CLOSE
 
 
 
@@ -56,6 +56,7 @@
 %type <domNode> blockquote pre code img article aside footer anchor
 %type <domNodeList> body_content unordered_list_content ordered_list_content
 %type <text> text
+
 
 %%
 
@@ -127,11 +128,12 @@ body_content:
     | body_content blockquote { $1->push_back($2); $$ = $1; }
     | body_content pre { $1->push_back($2); $$ = $1; }
     | body_content code { $1->push_back($2); $$ = $1; }
-    | body_content img { $1->push_back($2); $$ = $1; }
     | body_content article { $1->push_back($2); $$ = $1; }
     | body_content aside { $1->push_back($2); $$ = $1; }
     | body_content footer { $1->push_back($2); $$ = $1; }
     | body_content anchor { $1->push_back($2); $$ = $1; }
+    | body_content img { $1->push_back($2); $$ = $1; }
+
 
 ;
 
@@ -294,23 +296,6 @@ code:
     }
 ;
 
-//image tag
-img:
-    IMG_TAG SRC_TOK TEXT ALT_TOK TEXT IMG_CLOSE {
-        $$ = new DOMNode(IMG);
-
-        // Create DOMNode for src and alt
-        DOMNode* srcNode = new DOMNode(SRC, $3);
-        DOMNode* altNode = new DOMNode(ALT, $5);
-
-        // Append children using vector
-        std::vector<DOMNode*> children;
-        children.push_back(srcNode);
-        children.push_back(altNode);
-
-        $$->appendChildren(children);
-    }
-;
 
 // Article structure
 article:
@@ -347,6 +332,14 @@ anchor:
     }
 ;
 
+img:
+    IMG_OPEN TEXT IMG_CLOSE {
+        $$ = new DOMNode(IMG, $2);  // Store the entire img tag content as text
+    }
+    | IMG_OPEN TEXT IMG_SELF_CLOSE {
+        $$ = new DOMNode(IMG, $2);  // Handle self-closing img tag
+    }
+;
 
 
 // Text structure
@@ -355,6 +348,8 @@ text:
         $$ = strdup($1);  // Return raw text
     }
 ;
+
+
 
 
 %%
