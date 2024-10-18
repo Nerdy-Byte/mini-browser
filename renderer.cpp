@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QScrollArea>
 #include <iostream>
 
 using namespace std;
@@ -320,7 +321,7 @@ case TagType::A: {
     }
 }
 
-void renderDOMTree(DOMNode* root, QVBoxLayout* layout) {
+void renderDOMTree(DOMNode* root, QVBoxLayout* parentLayout) {
     if (root == nullptr) {
         std::cout << "DOM root is null" << std::endl;
         return;
@@ -328,6 +329,18 @@ void renderDOMTree(DOMNode* root, QVBoxLayout* layout) {
 
     std::cout << "Rendering DOM Tree..." << std::endl;
 
-    renderDOMNode(root, layout);
+    // Create a widget to hold the DOM content
+    QWidget* domContentWidget = new QWidget();
+    QVBoxLayout* domContentLayout = new QVBoxLayout(domContentWidget);
 
+    // Render the DOM inside the layout
+    renderDOMNode(root, domContentLayout);
+
+    // Add the scroll area
+    QScrollArea* scrollArea = new QScrollArea();
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setWidget(domContentWidget);
+
+    // Add the scroll area to the parent layout
+    parentLayout->addWidget(scrollArea);
 }
