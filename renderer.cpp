@@ -1,6 +1,13 @@
 
 #include "dom_creater.h"
 #include "dom_tree.h"
+#include <QDesktopServices>
+#include <QUrl>
+#include <QFileInfo>
+#include <QDir>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <iostream>
 
 using namespace std;
 
@@ -258,22 +265,41 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
         return;
     }
 
-    case TagType::A: {
-    // Extract the href attribute from the DOM node
-    QString href = QString::fromStdString(node->getAttribute("href"));
+case TagType::A: {
+            QString href = QString::fromStdString(node->getAttribute("href"));
+            QLabel* anchorLabel = new QLabel("<a href=\"" + href + "\">" + QString::fromStdString(node->getTextContent()) + "</a>");
+            anchorLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
+            anchorLabel->setOpenExternalLinks(false);  // Disable automatic opening
 
-    // Create a clickable label for the anchor
-    QLabel* anchorLabel = new QLabel("<a href=\"" + href + "\">" + QString::fromStdString(node->getTextContent()) + "</a>");
-    
-    // Enable interaction for hyperlinks and open them externally
-    anchorLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
-    anchorLabel->setOpenExternalLinks(true);
-    
-    // Add the label to the layout
-    layout->addWidget(anchorLabel);
-    
-    return;
-    }
+            // Click handling for both external and local links
+            QObject::connect(anchorLabel, &QLabel::linkActivated, [href]() {
+                QString formattedHref = href;
+                // Check if it's an external URL or a local file
+                if (!href.startsWith("http://") && !href.startsWith("https://")) {
+                    if (href.contains(".")) {
+                        // Assume it's an external link if there's a dot (.)
+                        formattedHref = "http://" + href;
+                    } else {
+                        // Local link, open as a local file
+                        QString localPath = QDir::currentPath() + "/" + href;
+                        QFileInfo checkFile(localPath);
+                        if (checkFile.exists() && checkFile.isFile()) {
+                            QDesktopServices::openUrl(QUrl::fromLocalFile(localPath));
+                            return;
+                        } else {
+                            std::cerr << "File does not exist: " << localPath.toStdString() << std::endl;
+                            return;
+                        }
+                    }
+                }
+                // Open the external URL
+                QDesktopServices::openUrl(QUrl(formattedHref));
+            });
+
+            layout->addWidget(anchorLabel);
+            return;
+        }
+
 
 
 

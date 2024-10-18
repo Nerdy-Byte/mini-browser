@@ -339,9 +339,11 @@ footer:
 // Anchor structure
 
 anchor:
-    A_OPEN HREF_TOK text A_CLOSE {
-        $$ = new DOMNode(A, $3);  // Text inside anchor
-        $$->setAttribute("href", $2);  // Set the href attribute
+    A_OPEN HREF_TOK '>' TEXT A_CLOSE {
+        $$ = new DOMNode(A, $4);
+        $$->setAttribute("href", $2);
+        free($2);  
+        free($4);
     }
 ;
 

@@ -95,9 +95,29 @@ stack<string> prev_state;
 <BODY>"</h5>"                {printf("Token: H5_CLOSE\n"); return H5_CLOSE; }
 
 
-<BODY>"<a"                  {printf("Token: A_OPEN\n"); BEGIN(ANCHOR); return A_OPEN; }
-<ANCHOR>"href=\""            { yylval.text = strdup(yytext); return HREF_TOK; }  // Capture href attribute
-<ANCHOR>"\">|'"              { printf("Token: A_CLOSE\n"); BEGIN(BODY); return A_CLOSE; }  // End of the <a> tag
+<BODY>"<a"[ \t\n]*           {printf("Token: A_OPEN\n"); BEGIN(ANCHOR); return A_OPEN;}
+
+
+<ANCHOR>href[ \t\n]*=[ \t\n]*\"([^\"]*)\" {
+    printf("Token: HREF_TOK with value: %s\n", yytext);
+    // Extract just the URL part between quotes
+    char* start = strchr(yytext, '"');
+    if (start) {
+        start++; // Skip the opening quote
+        char* end = strrchr(start, '"');
+        if (end) {
+            *end = '\0';
+            yylval.text = strdup(start);
+            printf("Extracted URL: %s\n", yylval.text);
+            return HREF_TOK;
+        }
+    }
+    // If we couldn't parse properly, return the whole thing
+    yylval.text = strdup(yytext);
+    return HREF_TOK;
+}
+
+<ANCHOR>">"                 {printf("Token: ANCHOR_CLOSE_TAG\n"); BEGIN(BODY); return '>'; }
 <BODY>"</a>"                {printf("Token: A_CLOSE\n"); return A_CLOSE; }
 
 
