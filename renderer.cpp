@@ -18,7 +18,20 @@
 
 using namespace std;
 
-void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
+std::string findTitle(DOMNode* node) {  // helper that finds the title of the webpage
+    if (node == nullptr) return "";
+    if (getTagType(node->getName()) == TagType::TITLE) {
+        return node->getTextContent();
+    }
+    for (DOMNode* child : node->getChildren()) {
+        std::string title = findTitle(child);
+        if (!title.empty()) return title;
+    }
+    return "";
+}
+
+
+void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
     if (node == nullptr) {
         cout << "tree is empty!" << endl;
         return;
@@ -32,128 +45,132 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
     case TagType::BODY:
         // cout<<"Start"<<endl;
         for (DOMNode* child : node->getChildren()) {
-            renderDOMNode(child, layout);
+            renderDOMNode(child, layout, mainWindow);
         }
         return;
 
     case TagType::P: {
-        // cout<<"P"<<endl;
-        QTextEdit* paragraphDisplay = new QTextEdit();
-        paragraphDisplay->setReadOnly(true);
-        paragraphDisplay->setPlainText(QString::fromStdString(node->getTextContent()));
-        paragraphDisplay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        int contentHeight = paragraphDisplay->document()->size().height();
-        paragraphDisplay->setMinimumHeight(contentHeight + 10);
+        QLabel* paragraphDisplay = new QLabel();
+        paragraphDisplay->setText(QString::fromStdString(node->getTextContent()));
+        paragraphDisplay->setWordWrap(true);  
+        paragraphDisplay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);          
+        paragraphDisplay->adjustSize();  // Adjust the size to fit the text content
         layout->addWidget(paragraphDisplay);
         return;
     }
 
-
-    case TagType::TITLE:
-        // cout<<"TITLE"<<endl;
-        for (DOMNode* child : node->getChildren()) {
-            renderDOMNode(child, layout);
-        }
+    case TagType::TITLE: { // title tag is handled separately
         return;
+    }
 
     case TagType::H1: {
-        // cout<<"H1"<<endl;
         QLabel* headerLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         QFont font = headerLabel->font();
-        font.setPointSize(18);
-        headerLabel->setFont(font);
+        font.setPointSize(18);  // H1 size
+        headerLabel->setFont(font);        
+        headerLabel->setStyleSheet("margin-top: 5px; margin-bottom: 10px;");        
+        headerLabel->adjustSize();  
         layout->addWidget(headerLabel);
         return;
     }
 
     case TagType::H2: {
-        // cout<<"H1"<<endl;
         QLabel* headerLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         QFont font = headerLabel->font();
-        font.setPointSize(16);
-        headerLabel->setFont(font);
+        font.setPointSize(16);  // H2 size
+        headerLabel->setFont(font);        
+        headerLabel->setStyleSheet("margin-top: 8px; margin-bottom: 8px;");        
+        headerLabel->adjustSize();  
         layout->addWidget(headerLabel);
         return;
     }
 
     case TagType::H3: {
-        // cout<<"H1"<<endl;
         QLabel* headerLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         QFont font = headerLabel->font();
-        font.setPointSize(14);
-        headerLabel->setFont(font);
+        font.setPointSize(14);  // H3 size
+        headerLabel->setFont(font);        
+        headerLabel->setStyleSheet("margin-top: 6px; margin-bottom: 6px;");        
+        headerLabel->adjustSize();  
         layout->addWidget(headerLabel);
         return;
     }
 
     case TagType::H4: {
-        // cout<<"H1"<<endl;
         QLabel* headerLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         QFont font = headerLabel->font();
-        font.setPointSize(12);
-        headerLabel->setFont(font);
+        font.setPointSize(12);  // H4 size
+        headerLabel->setFont(font);        
+        headerLabel->setStyleSheet("margin-top: 4px; margin-bottom: 4px;");        
+        headerLabel->adjustSize();  
         layout->addWidget(headerLabel);
         return;
     }
 
     case TagType::H5: {
-        // cout<<"H1"<<endl;
         QLabel* headerLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         QFont font = headerLabel->font();
-        font.setPointSize(10);
-        headerLabel->setFont(font);
+        font.setPointSize(10);  // H5 size
+        headerLabel->setFont(font);        
+        headerLabel->setStyleSheet("margin-top: 2px; margin-bottom: 2px;");        
+        headerLabel->adjustSize();  
         layout->addWidget(headerLabel);
         return;
     }
 
     case TagType::DIV: {
         // cout<<"DIV"<<endl;
-        QLabel* divLabel = new QLabel("Div Section:");
+        QLabel* divLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         layout->addWidget(divLabel);
         for (DOMNode* child : node->getChildren()) {
             renderDOMNode(child, layout);
         }
         return;
     }
-
     case TagType::UL: {
-        QListWidget* listWidget = new QListWidget();
-        layout->addWidget(listWidget);
+        QVBoxLayout* listLayout = new QVBoxLayout();  // new layout for the list
+        listLayout->setContentsMargins(20, 0, 0, 10);  
+
         for (DOMNode* child : node->getChildren()) {
             TagType childTagType = getTagType(child->getName());
             if (childTagType == TagType::LI) {
-                QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(child->getTextContent()));
-                listWidget->addItem(item);
+                // bullet point for unordered list items
+                QLabel* listItem = new QLabel("• " + QString::fromStdString(child->getTextContent()));
+                listItem->setWordWrap(true);  // wrapping for long items
+                // spacing between list items
+                listItem->setContentsMargins(0, 0, 0, 5);
+                listLayout->addWidget(listItem);
             } else {
                 cout << "ERROR: Expected <li> in <ul>, but found: " << child->getName() << endl;
             }
         }
+        layout->addLayout(listLayout);  
         return;
-
     }
 
     case TagType::OL: {
-        QListWidget* listWidget = new QListWidget();
-        listWidget->setUniformItemSizes(true);
-        layout->addWidget(listWidget);
-
-        int itemNumber = 1;
+        QVBoxLayout* listLayout = new QVBoxLayout();  
+        listLayout->setContentsMargins(20, 0, 0, 10); 
+        int itemNumber = 1;  // Start numbering from 1
         for (DOMNode* child : node->getChildren()) {
             TagType childTagType = getTagType(child->getName());
             if (childTagType == TagType::LI) {
-                QString numberedItem = QString::number(itemNumber) + ". " + QString::fromStdString(child->getTextContent());
-                QListWidgetItem* item = new QListWidgetItem(numberedItem);
-                listWidget->addItem(item);
-                itemNumber++;
+                // numbered list item
+                QLabel* listItem = new QLabel(QString::number(itemNumber) + ". " + QString::fromStdString(child->getTextContent()));
+                listItem->setWordWrap(true);  
+                listItem->setContentsMargins(0, 0, 0, 5);  
+                listLayout->addWidget(listItem);
+                itemNumber++;  // Increment the list number
             } else {
                 cout << "ERROR: Expected <li> in <ol>, but found: " << child->getName() << endl;
             }
         }
+        layout->addLayout(listLayout);  
         return;
     }
 
     case TagType::HEADER: {
-        QLabel* headerLabel = new QLabel("Header:");
+        QLabel* headerLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         layout->addWidget(headerLabel);
         for (DOMNode* child : node->getChildren()) {
             renderDOMNode(child, layout);
@@ -162,7 +179,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
     }
 
     case TagType::NAV: {
-        QLabel* navLabel = new QLabel("Nav");
+        QLabel* navLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         layout->addWidget(navLabel);
         for (DOMNode* child : node->getChildren()) {
             renderDOMNode(child, layout);
@@ -171,7 +188,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
     }
 
     case TagType::SECTION: {
-        QLabel* sectionLabel = new QLabel("Section:");
+        QLabel* sectionLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         layout->addWidget(sectionLabel);
         for (DOMNode* child : node->getChildren()) {
             renderDOMNode(child, layout);
@@ -215,23 +232,34 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout) {
     }
 
     case TagType::BLOCK_QUOTE: {
-        QTextEdit* blockquoteDisplay = new QTextEdit();
-        blockquoteDisplay->setReadOnly(true);
-        blockquoteDisplay->setPlainText(QString::fromStdString(node->getTextContent()));
-        blockquoteDisplay->setFrameStyle(QFrame::NoFrame);  // Disable the default frame/border
-        blockquoteDisplay->setStyleSheet("background-color: #d3d3d3; padding: 10px;"); // No border
+        QLabel* blockquoteDisplay = new QLabel(QString::fromStdString(node->getTextContent()));
+        blockquoteDisplay->setWordWrap(true);  
+        blockquoteDisplay->setFrameStyle(QFrame::NoFrame); 
+        blockquoteDisplay->setStyleSheet("background-color: #d3d3d3; padding: 10px; margin-bottom: 10px;");
         blockquoteDisplay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        int contentHeight = blockquoteDisplay->document()->size().height();
-        blockquoteDisplay->setMinimumHeight(contentHeight + 20);
+        QSize contentSize = blockquoteDisplay->sizeHint();
+        blockquoteDisplay->setFixedHeight(contentSize.height() + 10);  
         layout->addWidget(blockquoteDisplay);
         return;
     }
 
-    case TagType::PRE: {
+   case TagType::PRE: {
         QTextEdit* textEdit = new QTextEdit();
         textEdit->setReadOnly(true);
-        textEdit->setFontFamily("Courier");
-        textEdit->setText(QString::fromStdString(node->getTextContent()));
+        textEdit->setFontFamily("Courier");  // Monospace font for preformatted text
+
+        QString content = QString::fromStdString(node->getTextContent()).trimmed();
+        textEdit->setPlainText(content);    
+        textEdit->setFrameStyle(QFrame::NoFrame);    
+        textEdit->setStyleSheet("background: transparent; margin: 0px; padding: 0px;");    
+        textEdit->setContentsMargins(0, 0, 0, 0);
+        textEdit->document()->setDocumentMargin(0);
+
+        // resize based on content
+        textEdit->document()->setTextWidth(textEdit->viewport()->width());
+        int contentHeight = textEdit->document()->size().height();
+        textEdit->setFixedHeight(contentHeight); 
+
         layout->addWidget(textEdit);
         return;
     }
@@ -281,10 +309,10 @@ case TagType::A: {
             // Click handling for both external and local links
             QObject::connect(anchorLabel, &QLabel::linkActivated, [href]() {
                 QString formattedHref = href;
-                // Check if it's an external URL or a local file
+                // Check for external URL or local file
                 if (!href.startsWith("http://") && !href.startsWith("https://")) {
                     if (href.contains(".")) {
-                        // Assume it's an external link if there's a dot (.)
+                        // Assuming it's an external link if there's a dot (.)
                         formattedHref = "http://" + href;
                     } else {
                         // Local link, open as a local file
@@ -323,9 +351,8 @@ case TagType::IMG: {
     QLabel* imageLabel = new QLabel();
     QPixmap pixmap;
 
-    // Load the image using the src
+    // Load image using src
     if (src.startsWith("http://") || src.startsWith("https://")) {
-        // For network images
         QNetworkAccessManager manager;
         QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(src)));
         QEventLoop loop;
@@ -342,7 +369,7 @@ case TagType::IMG: {
     }
 
     if (pixmap.isNull()) {
-        // If loading failed, display alt text or a placeholder
+        // loading failed display alt text or a placeholder
         QLabel* errorLabel = new QLabel(alt.isEmpty() ? "Image not found" : alt);
         errorLabel->setStyleSheet("background-color: #f0f0f0; padding: 5px; border: 1px solid #ccc;");
         layout->addWidget(errorLabel);
@@ -353,7 +380,6 @@ case TagType::IMG: {
     }
     return;
 }
-
 
     default:
         cout << "ERROR: Unknown tag type: " << node->getName() << endl;
@@ -366,21 +392,26 @@ void renderDOMTree(DOMNode* root, QVBoxLayout* parentLayout) {
         std::cout << "DOM root is null" << std::endl;
         return;
     }
-
     std::cout << "Rendering DOM Tree..." << std::endl;
 
-    // Create a widget to hold the DOM content
+    // Find title
+    std::string title = findTitle(root);
+    QLabel* titleLabel = new QLabel(QString::fromStdString(title));
+    titleLabel->setStyleSheet("font-weight: bold; font-size: 14px;");
+    parentLayout->addWidget(titleLabel);
     QWidget* domContentWidget = new QWidget();
     QVBoxLayout* domContentLayout = new QVBoxLayout(domContentWidget);
 
-    // Render the DOM inside the layout
-    renderDOMNode(root, domContentLayout);
+    // parent widget (main window)
+    QWidget* mainWindow = parentLayout->parentWidget()->window();
 
-    // Add the scroll area
+    // Render the DOM inside the layout passing the main window
+    renderDOMNode(root, domContentLayout, mainWindow);
+
+    // scroll bar
     QScrollArea* scrollArea = new QScrollArea();
     scrollArea->setWidgetResizable(true);
     scrollArea->setWidget(domContentWidget);
 
-    // Add the scroll area to the parent layout
     parentLayout->addWidget(scrollArea);
 }

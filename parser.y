@@ -133,6 +133,7 @@ body_content:
     | body_content footer { $1->push_back($2); $$ = $1; }
     | body_content anchor { $1->push_back($2); $$ = $1; }
     | body_content img { $1->push_back($2); $$ = $1; }
+    
 
 
 ;

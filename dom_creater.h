@@ -14,7 +14,7 @@
     DOMNode* dom_creater_main(char*);
     DOMNode* dom_creater_string(const std::string& input);
 
-    void renderDOMNode(DOMNode* node, QVBoxLayout* layout);
+    void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow = nullptr);
     void renderDOMTree(DOMNode* root, QVBoxLayout* layout);
 
     //functions for featching the pages.
