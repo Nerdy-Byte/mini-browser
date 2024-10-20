@@ -129,43 +129,56 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
     }
     case TagType::UL: {
         QVBoxLayout* listLayout = new QVBoxLayout();  // new layout for the list
-        listLayout->setContentsMargins(20, 0, 0, 10);  
+        listLayout->setContentsMargins(20, 0, 0, 10);
 
         for (DOMNode* child : node->getChildren()) {
             TagType childTagType = getTagType(child->getName());
             if (childTagType == TagType::LI) {
-                // bullet point for unordered list items
-                QLabel* listItem = new QLabel("• " + QString::fromStdString(child->getTextContent()));
-                listItem->setWordWrap(true);  // wrapping for long items
-                // spacing between list items
-                listItem->setContentsMargins(0, 0, 0, 5);
-                listLayout->addWidget(listItem);
+                // Create a new layout for each list item
+                QVBoxLayout* listItemLayout = new QVBoxLayout();
+                listItemLayout->setContentsMargins(0, 0, 0, 5);  // Spacing between list items
+
+                // Render the contents of the list item, including nested <a> tags
+                for (DOMNode* grandChild : child->getChildren()) {
+                    renderDOMNode(grandChild, listItemLayout);
+                }
+
+                listLayout->addLayout(listItemLayout);  // Add each list item layout to the main list layout
             } else {
                 cout << "ERROR: Expected <li> in <ul>, but found: " << child->getName() << endl;
             }
         }
-        layout->addLayout(listLayout);  
+        layout->addLayout(listLayout);
         return;
     }
 
     case TagType::OL: {
-        QVBoxLayout* listLayout = new QVBoxLayout();  
-        listLayout->setContentsMargins(20, 0, 0, 10); 
+        QVBoxLayout* listLayout = new QVBoxLayout();
+        listLayout->setContentsMargins(20, 0, 0, 10);
         int itemNumber = 1;  // Start numbering from 1
+
         for (DOMNode* child : node->getChildren()) {
             TagType childTagType = getTagType(child->getName());
             if (childTagType == TagType::LI) {
-                // numbered list item
-                QLabel* listItem = new QLabel(QString::number(itemNumber) + ". " + QString::fromStdString(child->getTextContent()));
-                listItem->setWordWrap(true);  
-                listItem->setContentsMargins(0, 0, 0, 5);  
-                listLayout->addWidget(listItem);
+                // Create a new layout for each numbered list item
+                QVBoxLayout* listItemLayout = new QVBoxLayout();
+                listItemLayout->setContentsMargins(0, 0, 0, 5);  // Spacing between list items
+
+                // Render the contents of the list item, including nested <a> tags
+                QLabel* numberedLabel = new QLabel(QString::number(itemNumber) + ". ");
+                listItemLayout->addWidget(numberedLabel);
+
+                for (DOMNode* grandChild : child->getChildren()) {
+                    renderDOMNode(grandChild, listItemLayout);  // Render child content (including <a> tags)
+                }
+
+                listLayout->addLayout(listItemLayout);  // Add each list item layout to the main list layout
                 itemNumber++;  // Increment the list number
             } else {
                 cout << "ERROR: Expected <li> in <ol>, but found: " << child->getName() << endl;
             }
         }
-        layout->addLayout(listLayout);  
+        layout->addLayout(listLayout);
         return;
     }
 

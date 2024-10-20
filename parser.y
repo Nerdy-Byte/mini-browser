@@ -234,8 +234,9 @@ ordered_list_content:
 
 // List item structure (li)
 list_item:
-    LI_OPEN text LI_CLOSE {
-        $$ = new DOMNode(LI, $2);  // Text inside list item
+    LI_OPEN body_content LI_CLOSE {
+        $$ = new DOMNode(LI);
+        $$->appendChildren(*$2); 
     }
 ;
 
