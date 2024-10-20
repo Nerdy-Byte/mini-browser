@@ -133,17 +133,16 @@ body_content:
     | body_content footer { $1->push_back($2); $$ = $1; }
     | body_content anchor { $1->push_back($2); $$ = $1; }
     | body_content img { $1->push_back($2); $$ = $1; }
-    
-
-
+    | body_content text { $1->push_back(new DOMNode(TXT, $2)); $$ = $1; }  // Handle raw text inside the body
 ;
 
 
 
 // Paragraph structure
 paragraph:
-    P_OPEN text P_CLOSE {
-        $$ = new DOMNode(P, $2);  // Text inside paragraph
+    P_OPEN body_content P_CLOSE {
+        $$ = new DOMNode(P);
+        $$->appendChildren(*$2);  // Content inside nav
     }
 ;
 
@@ -344,12 +343,13 @@ img:
 ;
 
 
-// Text structure
 text:
     TEXT {
-        $$ = strdup($1);  // Return raw text
+        $$ = strdup($1);  // Copy the raw text, returning a string (char*)
     }
 ;
+
+
 
 
 

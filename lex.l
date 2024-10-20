@@ -42,47 +42,47 @@ stack<string> prev_state;
 
 <HTML>"<body>"               {printf("Token: BODY_OPEN\n"); BEGIN(BODY); return BODY_OPEN; }
 <BODY>"</body>"              {printf("Token: BODY_CLOSE\n"); BEGIN(HTML); return BODY_CLOSE; }
-<BODY>"<nav>"                {printf("Token: NAV_OPEN\n"); return NAV_OPEN; }
-<BODY>"</nav>"               {printf("Token: NAV_CLOSE\n"); return NAV_CLOSE; }
+<BODY,PARA>"<nav>"                {printf("Token: NAV_OPEN\n"); return NAV_OPEN; }
+<BODY,PARA>"</nav>"               {printf("Token: NAV_CLOSE\n"); return NAV_CLOSE; }
 <BODY>"<header>"             {printf("Token: HEADER_OPEN\n"); return HEADER_OPEN; }
 <BODY>"</header>"            {printf("Token: HEADER_CLOSE\n"); return HEADER_CLOSE; }
 <BODY>"<footer>"             {printf("Token: FOOTER_OPEN\n"); return FOOTER_OPEN; }
 <BODY>"</footer>"            {printf("Token: FOOTER_CLOSE\n"); return FOOTER_CLOSE; }
-<BODY>"<section>"            {printf("Token: SECTION_OPEN\n"); return SECTION_OPEN; }
-<BODY>"</section>"           {printf("Token: SECTION_CLOSE\n"); return SECTION_CLOSE; }
-<BODY>"<article>"            {printf("Token: ARTICLE_OPEN\n"); return ARTICLE_OPEN; }
-<BODY>"</article>"           {printf("Token: ARTICLE_CLOSE\n"); return ARTICLE_CLOSE; }
-<BODY>"<aside>"              {printf("Token: ASIDE_OPEN\n"); return ASIDE_OPEN; }
-<BODY>"</aside>"             {printf("Token: ASIDE_CLOSE\n"); return ASIDE_CLOSE; }
+<BODY,PARA>"<section>"            {printf("Token: SECTION_OPEN\n"); return SECTION_OPEN; }
+<BODY,PARA>"</section>"           {printf("Token: SECTION_CLOSE\n"); return SECTION_CLOSE; }
+<BODY,PARA>"<article>"            {printf("Token: ARTICLE_OPEN\n"); return ARTICLE_OPEN; }
+<BODY,PARA>"</article>"           {printf("Token: ARTICLE_CLOSE\n"); return ARTICLE_CLOSE; }
+<BODY,PARA>"<aside>"              {printf("Token: ASIDE_OPEN\n"); return ASIDE_OPEN; }
+<BODY,PARA>"</aside>"             {printf("Token: ASIDE_CLOSE\n"); return ASIDE_CLOSE; }
 
 
-<BODY>"<ul>"                 {printf("Token: UL_OPEN\n"); return UL_OPEN; }
-<BODY>"</ul>"                {printf("Token: UL_CLOSE\n"); return UL_CLOSE; }
-<BODY>"<ol>"                 {printf("Token: OL_OPEN\n"); return OL_OPEN; }
-<BODY>"</ol>"                {printf("Token: OL_CLOSE\n"); return OL_CLOSE; }
-<BODY>"<li>"                 {printf("Token: LI_OPEN\n"); return LI_OPEN; }
-<BODY>"</li>"                {printf("Token: LI_CLOSE\n"); return LI_CLOSE; }
+<BODY,PARA>"<ul>"                 {printf("Token: UL_OPEN\n"); return UL_OPEN; }
+<BODY,PARA>"</ul>"                {printf("Token: UL_CLOSE\n"); return UL_CLOSE; }
+<BODY,PARA>"<ol>"                 {printf("Token: OL_OPEN\n"); return OL_OPEN; }
+<BODY,PARA>"</ol>"                {printf("Token: OL_CLOSE\n"); return OL_CLOSE; }
+<BODY,PARA>"<li>"                 {printf("Token: LI_OPEN\n"); return LI_OPEN; }
+<BODY,PARA>"</li>"                {printf("Token: LI_CLOSE\n"); return LI_CLOSE; }
 
-<BODY>"<strong>"             {printf("Token: STRONG_OPEN\n"); return STRONG_OPEN; }
-<BODY>"</strong>"            {printf("Token: STRONG_CLOSE\n"); return STRONG_CLOSE; }
-<BODY>"<em>"                 {printf("Token: EM_OPEN\n"); return EM_OPEN; }
-<BODY>"</em>"                {printf("Token: EM_CLOSE\n"); return EM_CLOSE; }
-<BODY>"<u>"                  {printf("Token: U_OPEN\n"); return U_OPEN; }
-<BODY>"</u>"                 {printf("Token: U_CLOSE\n"); return U_CLOSE; }
-<BODY>"<small>"              {printf("Token: SMALL_OPEN\n"); return SMALL_OPEN; }
-<BODY>"</small>"             {printf("Token: SMALL_CLOSE\n"); return SMALL_CLOSE; }
+<BODY,PARA>"<strong>"             {printf("Token: STRONG_OPEN\n"); return STRONG_OPEN; }
+<BODY,PARA>"</strong>"            {printf("Token: STRONG_CLOSE\n"); return STRONG_CLOSE; }
+<BODY,PARA>"<em>"                 {printf("Token: EM_OPEN\n"); return EM_OPEN; }
+<BODY,PARA>"</em>"                {printf("Token: EM_CLOSE\n"); return EM_CLOSE; }
+<BODY,PARA>"<u>"                  {printf("Token: U_OPEN\n"); return U_OPEN; }
+<BODY,PARA>"</u>"                 {printf("Token: U_CLOSE\n"); return U_CLOSE; }
+<BODY,PARA>"<small>"              {printf("Token: SMALL_OPEN\n"); return SMALL_OPEN; }
+<BODY,PARA>"</small>"             {printf("Token: SMALL_CLOSE\n"); return SMALL_CLOSE; }
 
 
-<BODY>"<blockquote>"         {printf("Token: BLOCKQUOTE_OPEN\n"); return BLOCKQUOTE_OPEN; }
-<BODY>"</blockquote>"        {printf("Token: BLOCKQUOTE_CLOSE\n"); return BLOCKQUOTE_CLOSE; }
-<BODY>"<pre>"                {printf("Token: PRE_OPEN\n"); return PRE_OPEN; }
-<BODY>"</pre>"               {printf("Token: PRE_CLOSE\n"); return PRE_CLOSE; }
-<BODY>"<code>"               {printf("Token: CODE_OPEN\n"); return CODE_OPEN; }
-<BODY>"</code>"              {printf("Token: CODE_CLOSE\n"); return CODE_CLOSE; }
+<BODY,PARA>"<blockquote>"         {printf("Token: BLOCKQUOTE_OPEN\n"); return BLOCKQUOTE_OPEN; }
+<BODY,PARA>"</blockquote>"        {printf("Token: BLOCKQUOTE_CLOSE\n"); return BLOCKQUOTE_CLOSE; }
+<BODY,PARA>"<pre>"                {printf("Token: PRE_OPEN\n"); return PRE_OPEN; }
+<BODY,PARA>"</pre>"               {printf("Token: PRE_CLOSE\n"); return PRE_CLOSE; }
+<BODY,PARA>"<code>"               {printf("Token: CODE_OPEN\n"); return CODE_OPEN; }
+<BODY,PARA>"</code>"              {printf("Token: CODE_CLOSE\n"); return CODE_CLOSE; }
 
 
 <BODY>"<p>"                  {printf("Token: P_OPEN\n"); BEGIN(PARA); return P_OPEN; }
-<PARA>"</p>"                 {printf("Token: P_CLOSE\n"); BEGIN(BODY); return P_CLOSE; }
+<BODY,PARA>"</p>"            {printf("Token: P_CLOSE\n"); BEGIN(BODY); return P_CLOSE; }
 <BODY>"<h1>"                 {printf("Token: H1_OPEN\n"); BEGIN(H1); return H1_OPEN; }
 <H1>"</h1>"                  {printf("Token: H1_CLOSE\n"); BEGIN(BODY); return H1_CLOSE; }
 <BODY>"<h2>"                 {printf("Token: H2_OPEN\n"); return H2_OPEN; }

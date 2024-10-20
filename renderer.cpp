@@ -49,15 +49,18 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
         }
         return;
 
-    case TagType::P: {
-        QLabel* paragraphDisplay = new QLabel();
-        paragraphDisplay->setText(QString::fromStdString(node->getTextContent()));
-        paragraphDisplay->setWordWrap(true);  
-        paragraphDisplay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);          
-        paragraphDisplay->adjustSize();  // Adjust the size to fit the text content
-        layout->addWidget(paragraphDisplay);
+case TagType::P: {
+        QLabel* paraLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+        layout->addWidget(paraLabel);
+        for (DOMNode* child : node->getChildren()) {
+            renderDOMNode(child, layout); 
+        }
         return;
     }
+
+
+
+
 
     case TagType::TITLE: { // title tag is handled separately
         return;
@@ -313,86 +316,94 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
         return;
     }
 
-case TagType::A: {
-            QString href = QString::fromStdString(node->getAttribute("href"));
-            QLabel* anchorLabel = new QLabel("<a href=\"" + href + "\">" + QString::fromStdString(node->getTextContent()) + "</a>");
-            anchorLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
-            anchorLabel->setOpenExternalLinks(false);  // Disable automatic opening
+    case TagType::A: {
+                QString href = QString::fromStdString(node->getAttribute("href"));
+                QLabel* anchorLabel = new QLabel("<a href=\"" + href + "\">" + QString::fromStdString(node->getTextContent()) + "</a>");
+                anchorLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
+                anchorLabel->setOpenExternalLinks(false);  // Disable automatic opening
 
-            // Click handling for both external and local links
-            QObject::connect(anchorLabel, &QLabel::linkActivated, [href]() {
-                QString formattedHref = href;
-                // Check for external URL or local file
-                if (!href.startsWith("http://") && !href.startsWith("https://")) {
-                    if (href.contains(".")) {
-                        // Assuming it's an external link if there's a dot (.)
-                        formattedHref = "http://" + href;
-                    } else {
-                        // Local link, open as a local file
-                        QString localPath = QDir::currentPath() + "/" + href;
-                        QFileInfo checkFile(localPath);
-                        if (checkFile.exists() && checkFile.isFile()) {
-                            QDesktopServices::openUrl(QUrl::fromLocalFile(localPath));
-                            return;
+                // Click handling for both external and local links
+                QObject::connect(anchorLabel, &QLabel::linkActivated, [href]() {
+                    QString formattedHref = href;
+                    // Check for external URL or local file
+                    if (!href.startsWith("http://") && !href.startsWith("https://")) {
+                        if (href.contains(".")) {
+                            // Assuming it's an external link if there's a dot (.)
+                            formattedHref = "http://" + href;
                         } else {
-                            std::cerr << "File does not exist: " << localPath.toStdString() << std::endl;
-                            return;
+                            // Local link, open as a local file
+                            QString localPath = QDir::currentPath() + "/" + href;
+                            QFileInfo checkFile(localPath);
+                            if (checkFile.exists() && checkFile.isFile()) {
+                                QDesktopServices::openUrl(QUrl::fromLocalFile(localPath));
+                                return;
+                            } else {
+                                std::cerr << "File does not exist: " << localPath.toStdString() << std::endl;
+                                return;
+                            }
                         }
                     }
-                }
-                // Open the external URL
-                QDesktopServices::openUrl(QUrl(formattedHref));
-            });
+                    // Open the external URL
+                    QDesktopServices::openUrl(QUrl(formattedHref));
+                });
 
-            layout->addWidget(anchorLabel);
-            return;
+                layout->addWidget(anchorLabel);
+                return;
+            }
+
+    case TagType::IMG: {
+        QString imgTag = QString::fromStdString(node->getTextContent());
+
+        // Extract src
+        int srcStart = imgTag.indexOf("src=\"") + 5;
+        int srcEnd = imgTag.indexOf("\"", srcStart);
+        QString src = srcStart > 4 ? imgTag.mid(srcStart, srcEnd - srcStart) : "";
+
+        // Extract alt
+        int altStart = imgTag.indexOf("alt=\"") + 5;
+        int altEnd = imgTag.indexOf("\"", altStart);
+        QString alt = altStart > 4 ? imgTag.mid(altStart, altEnd - altStart) : "No alt text";
+
+        QLabel* imageLabel = new QLabel();
+        QPixmap pixmap;
+
+        // Load image using src
+        if (src.startsWith("http://") || src.startsWith("https://")) {
+            QNetworkAccessManager manager;
+            QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(src)));
+            QEventLoop loop;
+            QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+            loop.exec();
+            
+            if (reply->error() == QNetworkReply::NoError) {
+                pixmap.loadFromData(reply->readAll());
+            }
+            reply->deleteLater();
+        } else {
+            // Load from a local file
+            pixmap.load(src);
         }
 
-case TagType::IMG: {
-    QString imgTag = QString::fromStdString(node->getTextContent());
-
-    // Extract src
-    int srcStart = imgTag.indexOf("src=\"") + 5;
-    int srcEnd = imgTag.indexOf("\"", srcStart);
-    QString src = srcStart > 4 ? imgTag.mid(srcStart, srcEnd - srcStart) : "";
-
-    // Extract alt
-    int altStart = imgTag.indexOf("alt=\"") + 5;
-    int altEnd = imgTag.indexOf("\"", altStart);
-    QString alt = altStart > 4 ? imgTag.mid(altStart, altEnd - altStart) : "No alt text";
-
-    QLabel* imageLabel = new QLabel();
-    QPixmap pixmap;
-
-    // Load image using src
-    if (src.startsWith("http://") || src.startsWith("https://")) {
-        QNetworkAccessManager manager;
-        QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(src)));
-        QEventLoop loop;
-        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-        loop.exec();
-        
-        if (reply->error() == QNetworkReply::NoError) {
-            pixmap.loadFromData(reply->readAll());
+        if (pixmap.isNull()) {
+            // loading failed display alt text or a placeholder
+            QLabel* errorLabel = new QLabel(alt.isEmpty() ? "Image not found" : alt);
+            errorLabel->setStyleSheet("background-color: #f0f0f0; padding: 5px; border: 1px solid #ccc;");
+            layout->addWidget(errorLabel);
+        } else {
+            imageLabel->setPixmap(pixmap.scaled(400, 300, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+            imageLabel->setToolTip(alt);
+            layout->addWidget(imageLabel);
         }
-        reply->deleteLater();
-    } else {
-        // Load from a local file
-        pixmap.load(src);
+        return;
     }
 
-    if (pixmap.isNull()) {
-        // loading failed display alt text or a placeholder
-        QLabel* errorLabel = new QLabel(alt.isEmpty() ? "Image not found" : alt);
-        errorLabel->setStyleSheet("background-color: #f0f0f0; padding: 5px; border: 1px solid #ccc;");
-        layout->addWidget(errorLabel);
-    } else {
-        imageLabel->setPixmap(pixmap.scaled(400, 300, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        imageLabel->setToolTip(alt);
-        layout->addWidget(imageLabel);
+    case TagType::TXT: {
+        QLabel* textLabel = new QLabel(QString::fromStdString(node->getTextContent()));
+        textLabel->setWordWrap(true);  // Enable word wrapping for long text
+        layout->addWidget(textLabel);
+        return;
     }
-    return;
-}
+
 
     default:
         cout << "ERROR: Unknown tag type: " << node->getName() << endl;

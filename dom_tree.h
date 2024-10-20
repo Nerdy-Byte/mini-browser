@@ -40,6 +40,7 @@ enum TagType {
     FOOTER,
     SRC,
     ALT,
+    TXT,
     ERROR
 };
 
@@ -78,6 +79,7 @@ inline std::string tagTypeToString(TagType tagType) {
     case TagType::CODE: return "code";
     case TagType::SRC: return "src";
     case TagType::ALT: return "alt";
+    case TagType::TXT: return "text";  
 
     default: return "unknown";
     }
@@ -117,6 +119,7 @@ inline TagType getTagType(const std::string& tagName) {
     if (tagName == "code") return TagType::CODE;
     if (tagName == "src") return TagType::SRC;
     if (tagName == "alt") return TagType::ALT;
+    if (tagName == "text") return TagType::TXT; 
     return TagType::ERROR;
 }
 
