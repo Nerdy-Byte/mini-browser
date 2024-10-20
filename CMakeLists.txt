@@ -42,6 +42,8 @@ set(PROJECT_SOURCES
     ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp    # Generated Flex lexer
 )
 
+set_property(SOURCE main.cpp PROPERTY SKIP_AUTOMOC ON)
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(untitled
         MANUAL_FINALIZATION

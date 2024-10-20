@@ -1,6 +1,6 @@
 %{
     #include <cstring>
-    #include "../dom_tree.h"
+    #include "../../dom_tree.h"
     #include "parser.hpp"
 
     extern int yylex();
@@ -40,7 +40,7 @@
 %token ARTICLE_OPEN ARTICLE_CLOSE
 %token ASIDE_OPEN ASIDE_CLOSE
 %token OL_OPEN OL_CLOSE
-%token A_OPEN A_CLOSE   
+%token A_OPEN A_CLOSE
 %token STRONG_OPEN STRONG_CLOSE
 %token EM_OPEN EM_CLOSE
 %token U_OPEN U_CLOSE
@@ -235,7 +235,7 @@ ordered_list_content:
 list_item:
     LI_OPEN body_content LI_CLOSE {
         $$ = new DOMNode(LI);
-        $$->appendChildren(*$2); 
+        $$->appendChildren(*$2);
     }
 ;
 
@@ -302,7 +302,7 @@ code:
 article:
     ARTICLE_OPEN body_content ARTICLE_CLOSE {
         $$ = new DOMNode(ARTICLE);
-        $$->appendChildren(*$2);  
+        $$->appendChildren(*$2);
     }
 ;
 
@@ -310,7 +310,7 @@ article:
 aside:
     ASIDE_OPEN body_content ASIDE_CLOSE {
         $$ = new DOMNode(ASIDE);
-        $$->appendChildren(*$2);  
+        $$->appendChildren(*$2);
     }
 ;
 
@@ -318,7 +318,7 @@ aside:
 footer:
     FOOTER_OPEN body_content FOOTER_CLOSE {
         $$ = new DOMNode(ASIDE);
-        $$->appendChildren(*$2);  
+        $$->appendChildren(*$2);
     }
 ;
 
@@ -328,7 +328,7 @@ anchor:
     A_OPEN HREF_TOK '>' TEXT A_CLOSE {
         $$ = new DOMNode(A, $4);
         $$->setAttribute("href", $2);
-        free($2);  
+        free($2);
         free($4);
     }
 ;
