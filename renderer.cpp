@@ -131,27 +131,35 @@ case TagType::P: {
         return;
     }
     case TagType::UL: {
-        QVBoxLayout* listLayout = new QVBoxLayout();  // new layout for the list
-        listLayout->setContentsMargins(20, 0, 0, 10);
+        QVBoxLayout* listLayout = new QVBoxLayout();  
+        listLayout->setContentsMargins(20, 0, 0, 10);  
 
         for (DOMNode* child : node->getChildren()) {
             TagType childTagType = getTagType(child->getName());
-            if (childTagType == TagType::LI) {
-                // Create a new layout for each list item
-                QVBoxLayout* listItemLayout = new QVBoxLayout();
-                listItemLayout->setContentsMargins(0, 0, 0, 5);  // Spacing between list items
 
-                // Render the contents of the list item, including nested <a> tags
+            if (childTagType == TagType::LI) {
+                QHBoxLayout* listItemLayout = new QHBoxLayout();
+                listItemLayout->setContentsMargins(0, 0, 0, 5);  
+
+                // Add bullet point
+                QLabel* bulletLabel = new QLabel("•");
+                bulletLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);  
+                listItemLayout->addWidget(bulletLabel);  
+
+                QVBoxLayout* listItemContentLayout = new QVBoxLayout();
+
                 for (DOMNode* grandChild : child->getChildren()) {
-                    renderDOMNode(grandChild, listItemLayout);
+                    renderDOMNode(grandChild, listItemContentLayout);  
                 }
 
-                listLayout->addLayout(listItemLayout);  // Add each list item layout to the main list layout
+                listItemLayout->addLayout(listItemContentLayout);  
+                listLayout->addLayout(listItemLayout);  
             } else {
                 cout << "ERROR: Expected <li> in <ul>, but found: " << child->getName() << endl;
             }
         }
-        layout->addLayout(listLayout);
+
+        layout->addLayout(listLayout);  // Add the entire list layout to the main layout
         return;
     }
 
