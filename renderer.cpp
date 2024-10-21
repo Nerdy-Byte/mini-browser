@@ -49,12 +49,36 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
         }
         return;
 
-case TagType::P: {
-        QLabel* paraLabel = new QLabel(QString::fromStdString(node->getTextContent()));
-        layout->addWidget(paraLabel);
+    case TagType::P: {
+        QString paraText;
+        // Loop through the children of the paragraph node and render inline elements
         for (DOMNode* child : node->getChildren()) {
-            renderDOMNode(child, layout); 
+            TagType childTagType = getTagType(child->getName());
+
+            switch (childTagType) {
+                case TagType::STRONG:
+                    paraText += "<strong>" + QString::fromStdString(child->getTextContent()) + "</strong>";
+                    break;
+                case TagType::EM:
+                    paraText += "<em>" + QString::fromStdString(child->getTextContent()) + "</em>";
+                    break;
+                case TagType::U:
+                    paraText += "<u>" + QString::fromStdString(child->getTextContent()) + "</u>";
+                    break;
+                case TagType::SMALL:
+                    paraText += "<small>" + QString::fromStdString(child->getTextContent()) + "</small>";
+                    break;
+                default:
+                    // Render normal text content
+                    paraText += QString::fromStdString(child->getTextContent());
+                    break;
+            }
         }
+
+        QLabel* paraLabel = new QLabel();
+        paraLabel->setText(paraText);
+        paraLabel->setWordWrap(true);
+        layout->addWidget(paraLabel);
         return;
     }
 
