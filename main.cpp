@@ -41,23 +41,27 @@ std::string fetch_html_from_url(const std::string& url) {
     return html_content;
 }
 
-void fetch_and_create_tab(QTabWidget* tabWidget, const std::string& url, const std::string& tabName) {
+void fetch_and_create_tab(QTabWidget* tabWidget, const std::string& url) {
     std::string html_content = fetch_html_from_url(url);
 
-
-    QMetaObject::invokeMethod(tabWidget, [tabWidget, html_content, tabName]() {
+    QMetaObject::invokeMethod(tabWidget, [tabWidget, html_content]() {
         DOMNode* root = dom_creater_string(html_content);
-        if (root == nullptr) {
-            return;
-        }
+        if (root == nullptr) return;
+
+        // Find the title from the DOM structure
+        std::string titleText = findTitle(root); 
 
         QWidget* tab = new QWidget();
         QVBoxLayout* tabLayout = new QVBoxLayout(tab);
-        renderDOMTree(root, tabLayout);
+        renderDOMTree(root, tabLayout); 
+
+        // If the title is empty, use a default name for the tab
+        QString tabName = QString::fromStdString(titleText.empty() ? "Untitled" : titleText);
         tab->setLayout(tabLayout);
-        tabWidget->addTab(tab, QString::fromStdString(tabName));
+        tabWidget->addTab(tab, tabName);  // Set the tab title
     }, Qt::QueuedConnection);
 }
+
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
@@ -68,7 +72,6 @@ int main(int argc, char* argv[]) {
     QTabWidget* tabWidget = new QTabWidget(&window);
     QVBoxLayout* mainLayout = new QVBoxLayout(&window);
 
-
     QPushButton* addTabButton = new QPushButton("Add New Tab");
     mainLayout->addWidget(addTabButton);
     mainLayout->addWidget(tabWidget);
@@ -76,11 +79,9 @@ int main(int argc, char* argv[]) {
 
     int tabCounter = 1;
 
-
     QObject::connect(addTabButton, &QPushButton::clicked, [&]() {
         std::string url = "http://localhost:8000/html_page_" + std::to_string(tabCounter) + ".html";
-        std::string tabName = "Page " + std::to_string(tabCounter);
-        std::thread fetch_thread(fetch_and_create_tab, tabWidget, url, tabName);
+        std::thread fetch_thread(fetch_and_create_tab, tabWidget, url); 
         fetch_thread.detach();
 
         tabCounter++;
@@ -89,3 +90,4 @@ int main(int argc, char* argv[]) {
     window.show();
     return app.exec();
 }
+

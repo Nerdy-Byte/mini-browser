@@ -425,18 +425,12 @@ void renderDOMTree(DOMNode* root, QVBoxLayout* parentLayout) {
         return;
     }
     std::cout << "Rendering DOM Tree..." << std::endl;
-
-    // Find title
     std::string title = findTitle(root);
-    QLabel* titleLabel = new QLabel(QString::fromStdString(title));
-    titleLabel->setStyleSheet("font-weight: bold; font-size: 14px;");
-    parentLayout->addWidget(titleLabel);
     QWidget* domContentWidget = new QWidget();
     QVBoxLayout* domContentLayout = new QVBoxLayout(domContentWidget);
 
     // parent widget (main window)
     QWidget* mainWindow = parentLayout->parentWidget()->window();
-
     // Render the DOM inside the layout passing the main window
     renderDOMNode(root, domContentLayout, mainWindow);
 
@@ -444,6 +438,5 @@ void renderDOMTree(DOMNode* root, QVBoxLayout* parentLayout) {
     QScrollArea* scrollArea = new QScrollArea();
     scrollArea->setWidgetResizable(true);
     scrollArea->setWidget(domContentWidget);
-
     parentLayout->addWidget(scrollArea);
 }
