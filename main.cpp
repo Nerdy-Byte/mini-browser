@@ -48,17 +48,16 @@ void fetch_and_create_tab(QTabWidget* tabWidget, const std::string& url) {
         DOMNode* root = dom_creater_string(html_content);
         if (root == nullptr) return;
 
-        // Find the title from the DOM structure
         std::string titleText = findTitle(root); 
 
         QWidget* tab = new QWidget();
         QVBoxLayout* tabLayout = new QVBoxLayout(tab);
         renderDOMTree(root, tabLayout); 
 
-        // If the title is empty, use a default name for the tab
+
         QString tabName = QString::fromStdString(titleText.empty() ? "Untitled" : titleText);
         tab->setLayout(tabLayout);
-        tabWidget->addTab(tab, tabName);  // Set the tab title
+        tabWidget->addTab(tab, tabName);
     }, Qt::QueuedConnection);
 }
 
@@ -84,7 +83,7 @@ int main(int argc, char* argv[]) {
         std::thread fetch_thread(fetch_and_create_tab, tabWidget, url); 
         fetch_thread.detach();
 
-        tabCounter++;
+        tabCounter = (tabCounter%5)+1;
     });
 
     window.show();
