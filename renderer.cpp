@@ -31,7 +31,7 @@ std::string findTitle(DOMNode* node) {  // helper that finds the title of the we
 }
 
 
-void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
+void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow, QTabWidget* tabWidget) {
     if (node == nullptr) {
         cout << "tree is empty!" << endl;
         return;
@@ -45,7 +45,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
     case TagType::BODY:
         // cout<<"Start"<<endl;
         for (DOMNode* child : node->getChildren()) {
-            renderDOMNode(child, layout, mainWindow);
+            renderDOMNode(child, layout, mainWindow, tabWidget);
         }
         return;
 
@@ -150,7 +150,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
         QLabel* divLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         layout->addWidget(divLabel);
         for (DOMNode* child : node->getChildren()) {
-            renderDOMNode(child, layout);
+            renderDOMNode(child, layout, mainWindow, tabWidget);
         }
         return;
     }
@@ -173,7 +173,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
                 QVBoxLayout* listItemContentLayout = new QVBoxLayout();
 
                 for (DOMNode* grandChild : child->getChildren()) {
-                    renderDOMNode(grandChild, listItemContentLayout);  
+                    renderDOMNode(grandChild, listItemContentLayout, mainWindow, tabWidget);  
                 }
 
                 listItemLayout->addLayout(listItemContentLayout);  
@@ -204,7 +204,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
                 listItemLayout->addWidget(numberedLabel);
 
                 for (DOMNode* grandChild : child->getChildren()) {
-                    renderDOMNode(grandChild, listItemLayout);  // Render child content (including <a> tags)
+                    renderDOMNode(grandChild, listItemLayout, mainWindow, tabWidget);  // Render child content (including <a> tags)
                 }
 
                 listLayout->addLayout(listItemLayout);  // Add each list item layout to the main list layout
@@ -221,7 +221,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
         QLabel* headerLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         layout->addWidget(headerLabel);
         for (DOMNode* child : node->getChildren()) {
-            renderDOMNode(child, layout);
+            renderDOMNode(child, layout, mainWindow, tabWidget);
         }
         return;
     }
@@ -230,7 +230,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
         QLabel* navLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         layout->addWidget(navLabel);
         for (DOMNode* child : node->getChildren()) {
-            renderDOMNode(child, layout);
+            renderDOMNode(child, layout, mainWindow, tabWidget);
         }
         return;
     }
@@ -239,7 +239,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
         QLabel* sectionLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         layout->addWidget(sectionLabel);
         for (DOMNode* child : node->getChildren()) {
-            renderDOMNode(child, layout);
+            renderDOMNode(child, layout, mainWindow, tabWidget);
         }
         return;
     }
@@ -325,7 +325,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
         QLabel* articleLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         layout->addWidget(articleLabel);
         for (DOMNode* child : node->getChildren()) {
-            renderDOMNode(child, layout); 
+            renderDOMNode(child, layout, mainWindow, tabWidget); 
         }
         return;
     }
@@ -334,7 +334,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
         QLabel* asideLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         layout->addWidget(asideLabel);
         for (DOMNode* child : node->getChildren()) {
-            renderDOMNode(child, layout); 
+            renderDOMNode(child, layout, mainWindow, tabWidget); 
         }
         return;
     }
@@ -343,45 +343,70 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
         QLabel* footerLabel = new QLabel(QString::fromStdString(node->getTextContent()));
         layout->addWidget(footerLabel);
         for (DOMNode* child : node->getChildren()) {
-            renderDOMNode(child, layout); 
+            renderDOMNode(child, layout, mainWindow, tabWidget); 
         }
         return;
     }
 
     case TagType::A: {
-                QString href = QString::fromStdString(node->getAttribute("href"));
-                QLabel* anchorLabel = new QLabel("<a href=\"" + href + "\">" + QString::fromStdString(node->getTextContent()) + "</a>");
-                anchorLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
-                anchorLabel->setOpenExternalLinks(false);  // Disable automatic opening
+        QString href = QString::fromStdString(node->getAttribute("href"));
+        QLabel* anchorLabel = new QLabel("<a href=\"" + href + "\">" + QString::fromStdString(node->getTextContent()) + "</a>");
+        anchorLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
+        anchorLabel->setOpenExternalLinks(false);  // Disable automatic opening
 
-                // Click handling for both external and local links
-                QObject::connect(anchorLabel, &QLabel::linkActivated, [href]() {
-                    QString formattedHref = href;
-                    // Check for external URL or local file
-                    if (!href.startsWith("http://") && !href.startsWith("https://")) {
-                        if (href.contains(".")) {
-                            // Assuming it's an external link if there's a dot (.)
-                            formattedHref = "http://" + href;
-                        } else {
-                            // Local link, open as a local file
-                            QString localPath = QDir::currentPath() + "/" + href;
-                            QFileInfo checkFile(localPath);
-                            if (checkFile.exists() && checkFile.isFile()) {
-                                QDesktopServices::openUrl(QUrl::fromLocalFile(localPath));
-                                return;
-                            } else {
-                                std::cerr << "File does not exist: " << localPath.toStdString() << std::endl;
-                                return;
-                            }
-                        }
+        QObject::connect(anchorLabel, &QLabel::linkActivated, [href, tabWidget, mainWindow]() {
+            if (href.startsWith("http://") || href.startsWith("https://")) {
+                // External link: Open in system's default web browser
+                QDesktopServices::openUrl(QUrl(href));
+            } else {
+                // Internal link handling
+                QString localPath = QDir::currentPath() + "/" + href;
+
+                // Check if the tab already exists
+                bool tabFound = false;
+                for (int i = 0; i < tabWidget->count(); i++) {
+                    if (tabWidget->tabText(i) == href) {  // Use the href as tab name for simplicity
+                        tabWidget->setCurrentIndex(i);
+                        tabFound = true;
+                        break;
                     }
-                    // Open the external URL
-                    QDesktopServices::openUrl(QUrl(formattedHref));
-                });
+                }
 
-                layout->addWidget(anchorLabel);
-                return;
+                if (!tabFound) {
+                    // Fetch and create a new tab for the internal link
+                    QString url = "http://localhost:8000/" + href;  // Assume localhost serves the internal files
+                    QNetworkAccessManager* manager = new QNetworkAccessManager(mainWindow);
+
+                    QObject::connect(manager, &QNetworkAccessManager::finished, [tabWidget, href](QNetworkReply* reply) {
+                        if (reply->error() != QNetworkReply::NoError) {
+                            std::cerr << "Error fetching URL: " << reply->errorString().toStdString() << std::endl;
+                            reply->deleteLater();
+                            return;
+                        }
+
+                        QString html_content = reply->readAll();
+                        reply->deleteLater();
+
+                        DOMNode* root = dom_creater_string(html_content.toStdString());
+                        if (!root) return;
+
+                        QWidget* tab = new QWidget();
+                        QVBoxLayout* tabLayout = new QVBoxLayout(tab);
+                        renderDOMTree(root, tabLayout, tabWidget);  
+                        tab->setLayout(tabLayout);
+                        tabWidget->addTab(tab, href);
+                        tabWidget->setCurrentWidget(tab);  // Switch to the new tab
+                    });
+
+                    manager->get(QNetworkRequest(QUrl(url)));
+                }
             }
+        });
+
+        layout->addWidget(anchorLabel);
+        return;
+    }
+
 
     case TagType::IMG: {
         QString imgTag = QString::fromStdString(node->getTextContent());
@@ -443,7 +468,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow) {
     }
 }
 
-void renderDOMTree(DOMNode* root, QVBoxLayout* parentLayout) {
+void renderDOMTree(DOMNode* root, QVBoxLayout* parentLayout, QTabWidget* tabWidget) {
     if (root == nullptr) {
         std::cout << "DOM root is null" << std::endl;
         return;
@@ -456,7 +481,7 @@ void renderDOMTree(DOMNode* root, QVBoxLayout* parentLayout) {
     // parent widget (main window)
     QWidget* mainWindow = parentLayout->parentWidget()->window();
     // Render the DOM inside the layout passing the main window
-    renderDOMNode(root, domContentLayout, mainWindow);
+    renderDOMNode(root, domContentLayout, mainWindow, tabWidget);
 
     // scroll bar
     QScrollArea* scrollArea = new QScrollArea();

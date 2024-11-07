@@ -1,6 +1,6 @@
 %{
     #include <cstring>
-    #include "../../dom_tree.h"
+    #include "../dom_tree.h"
     #include "parser.hpp"
 
     extern int yylex();
@@ -67,6 +67,7 @@ start:
         DOMNodeList* nodeList = new DOMNodeList();
         nodeList->push_back($2);   // Wrap the single node in a list
         root->appendChildren(*nodeList);
+        delete nodeList;
     }
 ;
 
@@ -78,6 +79,7 @@ html:
         htmlContent->push_back($2);  // Head node
         htmlContent->push_back($3);  // Body node
         $$->appendChildren(*htmlContent);
+        delete htmlContent;
     }
 ;
 
@@ -88,6 +90,7 @@ head:
         DOMNodeList* headContent = new DOMNodeList();
         headContent->push_back($2);  // Title node
         $$->appendChildren(*headContent);
+        delete headContent;
     }
 ;
 
@@ -95,6 +98,7 @@ head:
 title:
     TITLE_OPEN TEXT TITLE_CLOSE {
         $$ = new DOMNode(TITLE, $2);  // Text inside title
+        delete $2;
     }
 ;
 
@@ -103,6 +107,7 @@ body:
     BODY_OPEN body_content BODY_CLOSE {
         $$ = new DOMNode(BODY);
         $$->appendChildren(*$2);  // Append body content (list of nodes)
+        delete $2;
     }
 ;
 
@@ -143,6 +148,7 @@ paragraph:
     P_OPEN body_content P_CLOSE {
         $$ = new DOMNode(P);
         $$->appendChildren(*$2);  // Content inside nav
+        delete $2;
     }
 ;
 
@@ -151,6 +157,7 @@ div:
     DIV_OPEN body_content DIV_CLOSE {
         $$ = new DOMNode(DIV);
         $$->appendChildren(*$2);  // Content inside div
+        delete $2;
     }
 ;
 
@@ -158,6 +165,7 @@ div:
 h1:
     H1_OPEN text H1_CLOSE {
         $$ = new DOMNode(H1, $2);  // Text inside h1
+        delete $2;
     }
 ;
 
@@ -165,24 +173,28 @@ h1:
 h2:
     H2_OPEN text H2_CLOSE {
         $$ = new DOMNode(H2, $2);  // Text inside h2
+        delete $2;
     }
 ;
 
 h3:
     H3_OPEN text H3_CLOSE {
         $$ = new DOMNode(H3, $2);  // Text inside h2
+        delete $2;
     }
 ;
 
 h4:
     H4_OPEN text H4_CLOSE {
         $$ = new DOMNode(H4, $2);  // Text inside h2
+        delete $2;
     }
 ;
 
 h5:
     H5_OPEN text H5_CLOSE {
         $$ = new DOMNode(H5, $2);  // Text inside h2
+        delete $2;
     }
 ;
 
@@ -191,6 +203,7 @@ nav:
     NAV_OPEN body_content NAV_CLOSE {
         $$ = new DOMNode(NAV);
         $$->appendChildren(*$2);  // Content inside nav
+        delete $2;
     }
 ;
 
@@ -199,6 +212,7 @@ header:
     HEADER_OPEN body_content HEADER_CLOSE {
         $$ = new DOMNode(HEADER);
         $$->appendChildren(*$2);  // Content inside header
+        delete $2;
     }
 ;
 
@@ -207,6 +221,7 @@ unordered_list:
     UL_OPEN unordered_list_content UL_CLOSE {
         $$ = new DOMNode(UL);
         $$->appendChildren(*$2);  // List items inside ul
+        delete $2;
     }
 ;
 
@@ -215,6 +230,7 @@ ordered_list:
     OL_OPEN ordered_list_content OL_CLOSE {
         $$ = new DOMNode(OL);
         $$->appendChildren(*$2);  // List items inside ol
+        delete $2;
     }
 ;
 
@@ -236,6 +252,7 @@ list_item:
     LI_OPEN body_content LI_CLOSE {
         $$ = new DOMNode(LI);
         $$->appendChildren(*$2);
+        delete $2;
     }
 ;
 
@@ -244,6 +261,7 @@ section:
     SECTION_OPEN body_content SECTION_CLOSE {
         $$ = new DOMNode(SECTION);
         $$->appendChildren(*$2);  // Content inside section
+        delete $2;
     }
 ;
 
@@ -251,6 +269,7 @@ section:
 strong:
     STRONG_OPEN text STRONG_CLOSE {
         $$ = new DOMNode(STRONG, $2);  // Text inside strong (bold)
+        delete $2;
     }
 ;
 
@@ -258,6 +277,7 @@ strong:
 em:
     EM_OPEN text EM_CLOSE {
         $$ = new DOMNode(EM, $2);  // Text inside em (italic)
+        delete $2;
     }
 ;
 
@@ -265,6 +285,7 @@ em:
 u:
     U_OPEN text U_CLOSE {
         $$ = new DOMNode(U, $2);  // Text inside u (underline)
+        delete $2;
     }
 ;
 
@@ -272,6 +293,7 @@ u:
 small:
     SMALL_OPEN text SMALL_CLOSE {
         $$ = new DOMNode(SMALL, $2);  // Text inside small (smaller font)
+        delete $2;
     }
 ;
 
@@ -279,6 +301,7 @@ small:
 blockquote:
     BLOCKQUOTE_OPEN text BLOCKQUOTE_CLOSE {
         $$ = new DOMNode(BLOCK_QUOTE, $2);  // Create a DOMNode for blockquote with its text content
+        delete $2;
     }
 ;
 
@@ -287,6 +310,7 @@ blockquote:
 pre:
     PRE_OPEN text PRE_CLOSE {
         $$ = new DOMNode(PRE, $2);  // Create a DOMNode for pre with its text content
+        delete $2;
     }
 ;
 
@@ -294,6 +318,7 @@ pre:
 code:
     CODE_OPEN text CODE_CLOSE {
         $$ = new DOMNode(CODE, $2);  // Text inside code
+        delete $2;
     }
 ;
 
@@ -303,6 +328,7 @@ article:
     ARTICLE_OPEN body_content ARTICLE_CLOSE {
         $$ = new DOMNode(ARTICLE);
         $$->appendChildren(*$2);
+        delete $2;
     }
 ;
 
@@ -311,6 +337,7 @@ aside:
     ASIDE_OPEN body_content ASIDE_CLOSE {
         $$ = new DOMNode(ASIDE);
         $$->appendChildren(*$2);
+        delete $2;
     }
 ;
 
@@ -319,6 +346,7 @@ footer:
     FOOTER_OPEN body_content FOOTER_CLOSE {
         $$ = new DOMNode(ASIDE);
         $$->appendChildren(*$2);
+        delete $2;
     }
 ;
 
@@ -336,9 +364,11 @@ anchor:
 img:
     IMG_OPEN TEXT IMG_CLOSE {
         $$ = new DOMNode(IMG, $2);  // Store the entire img tag content as text
+        free($2);
     }
     | IMG_OPEN TEXT IMG_SELF_CLOSE {
         $$ = new DOMNode(IMG, $2);  // Handle self-closing img tag
+        free($2);
     }
 ;
 

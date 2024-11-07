@@ -1,66 +1,60 @@
 #include "pages.h"
-#include <curl/curl.h>
-#include <thread>
-#include <mutex>
+#include <QApplication>
 #include <QPushButton>
 #include <QVBoxLayout>
-#include <QApplication>
 #include <QTabWidget>
-#include <QString>
 #include <QMetaObject>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 #include <iostream>
 
 using namespace std;
 
-std::mutex tab_mutex;
-
-
-size_t write_callback(void* contents, size_t size, size_t nmemb, std::string* s) {
-    size_t newLength = size * nmemb;
-    s->append((char*)contents, newLength);
-    return newLength;
-}
-
-std::string fetch_html_from_url(const std::string& url) {
-    CURL* curl;
-    CURLcode res;
-    std::string html_content;
-
-    curl = curl_easy_init();
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &html_content);
-        res = curl_easy_perform(curl);
-
-        if (res != CURLE_OK) {
-            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+// Function to fetch HTML asynchronously and create a new tab
+void fetch_html_async(const QString& url, QTabWidget* tabWidget) {
+    // Check if the tab with the same URL title already exists
+    for (int i = 0; i < tabWidget->count(); ++i) {
+        if (tabWidget->tabText(i) == url) {
+            tabWidget->setCurrentIndex(i);  // Switch to the existing tab
+            return;
         }
-        curl_easy_cleanup(curl);
     }
-    return html_content;
-}
 
-void fetch_and_create_tab(QTabWidget* tabWidget, const std::string& url) {
-    std::string html_content = fetch_html_from_url(url);
+    // Initialize the network manager, owned by tabWidget to avoid memory leaks
+    QNetworkAccessManager* manager = new QNetworkAccessManager(tabWidget);
 
-    QMetaObject::invokeMethod(tabWidget, [tabWidget, html_content]() {
-        DOMNode* root = dom_creater_string(html_content);
-        if (root == nullptr) return;
+    // Connect network request to handle fetched HTML content
+    QObject::connect(manager, &QNetworkAccessManager::finished, [tabWidget, url](QNetworkReply* reply) {
+        if (reply->error() != QNetworkReply::NoError) {
+            cerr << "Error fetching URL: " << reply->errorString().toStdString() << endl;
+            reply->deleteLater();
+            return;
+        }
 
-        std::string titleText = findTitle(root); 
+        QString html_content = reply->readAll();
+        reply->deleteLater();
 
+        // Create DOM from fetched HTML content
+        DOMNode* root = dom_creater_string(html_content.toStdString());
+        if (!root) return;
+
+        std::string titleText = findTitle(root);
+
+        // Create new tab for the content
         QWidget* tab = new QWidget();
         QVBoxLayout* tabLayout = new QVBoxLayout(tab);
-        renderDOMTree(root, tabLayout); 
-
+        renderDOMTree(root, tabLayout, tabWidget);  // Pass tabWidget here
 
         QString tabName = QString::fromStdString(titleText.empty() ? "Untitled" : titleText);
         tab->setLayout(tabLayout);
         tabWidget->addTab(tab, tabName);
-    }, Qt::QueuedConnection);
-}
+        tabWidget->setCurrentWidget(tab);  // Switch to the new tab
+    });
 
+    // Send the network request
+    manager->get(QNetworkRequest(QUrl(url)));
+}
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
@@ -79,14 +73,11 @@ int main(int argc, char* argv[]) {
     int tabCounter = 1;
 
     QObject::connect(addTabButton, &QPushButton::clicked, [&]() {
-        std::string url = "http://localhost:8000/html_page_" + std::to_string(tabCounter) + ".html";
-        std::thread fetch_thread(fetch_and_create_tab, tabWidget, url); 
-        fetch_thread.detach();
-
-        tabCounter = (tabCounter%5)+1;
+        QString url = "http://localhost:8000/html_page_" + QString::number(tabCounter) + ".html";
+        fetch_html_async(url, tabWidget);  // Call the async fetch function
+        tabCounter = (tabCounter % 5) + 1;
     });
 
     window.show();
     return app.exec();
 }
-

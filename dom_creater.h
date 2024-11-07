@@ -15,7 +15,7 @@
     DOMNode* dom_creater_string(const std::string& input);
 
     void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow = nullptr);
-    void renderDOMTree(DOMNode* root, QVBoxLayout* layout);
+    void renderDOMTree(DOMNode* root, QVBoxLayout* layout, QTabWidget* tabWidget);
     std::string findTitle(DOMNode* node);
 
     //functions for featching the pages.
