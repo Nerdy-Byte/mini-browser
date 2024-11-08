@@ -347,7 +347,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow, QTab
         }
         return;
     }
-
+    
     case TagType::A: {
         QString href = QString::fromStdString(node->getAttribute("href"));
         QLabel* anchorLabel = new QLabel("<a href=\"" + href + "\">" + QString::fromStdString(node->getTextContent()) + "</a>");
@@ -390,11 +390,17 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow, QTab
                         DOMNode* root = dom_creater_string(html_content.toStdString());
                         if (!root) return;
 
+                        // Extract the title from the newly loaded page content
+                        std::string titleText = findTitle(root);
+
                         QWidget* tab = new QWidget();
                         QVBoxLayout* tabLayout = new QVBoxLayout(tab);
                         renderDOMTree(root, tabLayout, tabWidget);  
                         tab->setLayout(tabLayout);
-                        tabWidget->addTab(tab, href);
+
+                        // Set the tab name based on the extracted title, or use the href as a fallback
+                        QString tabTitle = QString::fromStdString(titleText.empty() ? href.toStdString() : titleText);
+                        tabWidget->addTab(tab, tabTitle);
                         tabWidget->setCurrentWidget(tab);  // Switch to the new tab
                     });
 
