@@ -43,6 +43,8 @@ set(PROJECT_SOURCES
 )
 
 set_property(SOURCE main.cpp PROPERTY SKIP_AUTOMOC ON)
+set_property(SOURCE renderer.cpp PROPERTY SKIP_AUTOMOC ON)
+
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(untitled
@@ -52,6 +54,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         renderer.cpp
         pages.h
         lex.l parser.y
+
+
+
+
     )
 else()
     if(ANDROID)

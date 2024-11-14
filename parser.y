@@ -1,6 +1,6 @@
 %{
     #include <cstring>
-    #include "../dom_tree.h"
+    #include "../../dom_tree.h"
     #include "parser.hpp"
 
     extern int yylex();

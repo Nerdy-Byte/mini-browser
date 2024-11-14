@@ -7,16 +7,16 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QLineEdit>
 #include <iostream>
 
 using namespace std;
 
-// Function to fetch HTML asynchronously and create a new tab
+// Function to fetch HTML asynchronously and update an existing tab with the content
 void fetch_html_async(const QString& url, QTabWidget* tabWidget) {
-    // Check if the tab with the same URL title already exists
     for (int i = 0; i < tabWidget->count(); ++i) {
         if (tabWidget->tabText(i) == url) {
-            tabWidget->setCurrentIndex(i);  // Switch to the existing tab
+            tabWidget->setCurrentIndex(i);
             return;
         }
     }
@@ -35,24 +35,28 @@ void fetch_html_async(const QString& url, QTabWidget* tabWidget) {
         QString html_content = reply->readAll();
         reply->deleteLater();
 
-        // Create DOM from fetched HTML content
         DOMNode* root = dom_creater_string(html_content.toStdString());
         if (!root) return;
 
         std::string titleText = findTitle(root);
 
-        // Create new tab for the content
-        QWidget* tab = new QWidget();
-        QVBoxLayout* tabLayout = new QVBoxLayout(tab);
-        renderDOMTree(root, tabLayout, tabWidget);  // Pass tabWidget here
+        QWidget* currentTab = tabWidget->currentWidget();
+        if (currentTab) {
+            QVBoxLayout* tabLayout = qobject_cast<QVBoxLayout*>(currentTab->layout());
+            if (tabLayout) {
+                QLayoutItem* item;
+                while ((item = tabLayout->takeAt(0)) != nullptr) {
+                    delete item->widget();
+                    delete item;
+                }
 
-        QString tabName = QString::fromStdString(titleText.empty() ? "Untitled" : titleText);
-        tab->setLayout(tabLayout);
-        tabWidget->addTab(tab, tabName);
-        tabWidget->setCurrentWidget(tab);  // Switch to the new tab
+                renderDOMTree(root, tabLayout, tabWidget);
+                QString tabName = QString::fromStdString(titleText.empty() ? "Untitled" : titleText);
+                tabWidget->setTabText(tabWidget->currentIndex(), tabName);
+            }
+        }
+
     });
-
-    // Send the network request
     manager->get(QNetworkRequest(QUrl(url)));
 }
 
@@ -73,9 +77,26 @@ int main(int argc, char* argv[]) {
     int tabCounter = 1;
 
     QObject::connect(addTabButton, &QPushButton::clicked, [&]() {
-        QString url = "http://localhost:8000/html_page_" + QString::number(tabCounter) + ".html";
-        fetch_html_async(url, tabWidget);  // Call the async fetch function
-        tabCounter = (tabCounter % 5) + 1;
+
+        QWidget* newTab = new QWidget();
+        QVBoxLayout* tabLayout = new QVBoxLayout(newTab);
+
+        QLineEdit* urlInput = new QLineEdit();
+        urlInput->setPlaceholderText("Enter URL here...");
+        tabLayout->addWidget(urlInput);
+
+
+        QPushButton* fetchButton = new QPushButton("Fetch HTML");
+        tabLayout->addWidget(fetchButton);
+        QObject::connect(fetchButton, &QPushButton::clicked, [=]() {
+            QString url = urlInput->text();
+            if (!url.isEmpty()) {
+                QString fullUrl = "http://localhost:8000/" + url;
+                fetch_html_async(fullUrl, tabWidget);
+            }
+        });
+        newTab->setLayout(tabLayout);
+        tabWidget->addTab(newTab, "Tab " + QString::number(tabCounter++));
     });
 
     window.show();
