@@ -12,16 +12,11 @@
 
 using namespace std;
 
-// Function to fetch HTML asynchronously and update an existing tab with the content
-void fetch_html_async(const QString& url, QTabWidget* tabWidget) {
-    for (int i = 0; i < tabWidget->count(); ++i) {
-        if (tabWidget->tabText(i) == url) {
-            tabWidget->setCurrentIndex(i);
-            return;
-        }
-    }
+void render_html(DOMNode* root, QTabWidget* tabWidget, const std::string& titleText, const QString& url);
+void parse_html(const QString& html_content, QTabWidget* tabWidget, const QString& url);
 
-    // Initialize the network manager, owned by tabWidget to avoid memory leaks
+// Function to fetch HTML asynchronously
+void fetch_html(const QString& url, QTabWidget* tabWidget) {
     QNetworkAccessManager* manager = new QNetworkAccessManager(tabWidget);
 
     // Connect network request to handle fetched HTML content
@@ -35,29 +30,45 @@ void fetch_html_async(const QString& url, QTabWidget* tabWidget) {
         QString html_content = reply->readAll();
         reply->deleteLater();
 
-        DOMNode* root = dom_creater_string(html_content.toStdString());
-        if (!root) return;
-
-        std::string titleText = findTitle(root);
-
-        QWidget* currentTab = tabWidget->currentWidget();
-        if (currentTab) {
-            QVBoxLayout* tabLayout = qobject_cast<QVBoxLayout*>(currentTab->layout());
-            if (tabLayout) {
-                QLayoutItem* item;
-                while ((item = tabLayout->takeAt(0)) != nullptr) {
-                    delete item->widget();
-                    delete item;
-                }
-
-                renderDOMTree(root, tabLayout, tabWidget);
-                QString tabName = QString::fromStdString(titleText.empty() ? "Untitled" : titleText);
-                tabWidget->setTabText(tabWidget->currentIndex(), tabName);
-            }
-        }
-
+        // Call the parse_html function to parse the content
+        parse_html(html_content, tabWidget, url);
     });
+
     manager->get(QNetworkRequest(QUrl(url)));
+}
+
+// Function to parse the fetched HTML content
+void parse_html(const QString& html_content, QTabWidget* tabWidget, const QString& url) {
+    DOMNode* root = dom_creater_string(html_content.toStdString());
+    if (!root) return;
+
+    std::string titleText = findTitle(root);
+
+    // Call the render_html function to render the parsed DOM content in the tab
+    render_html(root, tabWidget, titleText, url);
+}
+
+// Function to render the parsed HTML content in the tab
+void render_html(DOMNode* root, QTabWidget* tabWidget, const std::string& titleText, const QString& url) {
+    QWidget* currentTab = tabWidget->currentWidget();
+    if (currentTab) {
+        QVBoxLayout* tabLayout = qobject_cast<QVBoxLayout*>(currentTab->layout());
+        if (tabLayout) {
+            // Clear the previous content
+            QLayoutItem* item;
+            while ((item = tabLayout->takeAt(0)) != nullptr) {
+                delete item->widget();
+                delete item;
+            }
+
+            // Render the new DOM content
+            renderDOMTree(root, tabLayout, tabWidget);
+
+            // Set the tab name
+            QString tabName = QString::fromStdString(titleText.empty() ? "Untitled" : titleText);
+            tabWidget->setTabText(tabWidget->currentIndex(), tabName);
+        }
+    }
 }
 
 int main(int argc, char* argv[]) {
@@ -85,16 +96,17 @@ int main(int argc, char* argv[]) {
         urlInput->setPlaceholderText("Enter URL here...");
         tabLayout->addWidget(urlInput);
 
-
         QPushButton* fetchButton = new QPushButton("Fetch HTML");
         tabLayout->addWidget(fetchButton);
+
         QObject::connect(fetchButton, &QPushButton::clicked, [=]() {
             QString url = urlInput->text();
             if (!url.isEmpty()) {
                 QString fullUrl = "http://localhost:8000/" + url;
-                fetch_html_async(fullUrl, tabWidget);
+                fetch_html(fullUrl, tabWidget);  // Fetch HTML
             }
         });
+
         newTab->setLayout(tabLayout);
         tabWidget->addTab(newTab, "Tab " + QString::number(tabCounter++));
     });
