@@ -11,6 +11,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
+
+
 # Add Network along with Widgets
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
@@ -21,6 +24,12 @@ find_package(CURL REQUIRED)
 # Find Flex and Bison packages
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
+
+include_directories("/opt/homebrew/opt/libomp/include")
+link_directories("/opt/homebrew/opt/libomp/lib")
+find_package(OpenMP REQUIRED)
+
+
 
 # Generate parser and lexer from Bison and Flex files
 BISON_TARGET(Parser parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp)
@@ -42,8 +51,13 @@ set(PROJECT_SOURCES
     ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp    # Generated Flex lexer
 )
 
+
 set_property(SOURCE main.cpp PROPERTY SKIP_AUTOMOC ON)
 set_property(SOURCE renderer.cpp PROPERTY SKIP_AUTOMOC ON)
+
+string(REPLACE "-fcolor-diagnostics" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+string(REPLACE "-fno-color-diagnostics" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DYYDEBUG=1")
 
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -54,9 +68,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         renderer.cpp
         pages.h
         lex.l parser.y
-
-
-
 
     )
 else()

@@ -10,13 +10,14 @@
 #include <QScrollArea>
 #include <iostream>
 
-
+#include <omp.h>
 #include <QPixmap>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QEventLoop>
 
 using namespace std;
+void renderDOMNodeParallel(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow, QTabWidget* tabWidget);
 
 std::string findTitle(DOMNode* node) {  // helper that finds the title of the webpage
     if (node == nullptr) return "";
@@ -474,6 +475,7 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow, QTab
     }
 }
 
+
 void renderDOMTree(DOMNode* root, QVBoxLayout* parentLayout, QTabWidget* tabWidget) {
     if (root == nullptr) {
         std::cout << "DOM root is null" << std::endl;
@@ -486,12 +488,35 @@ void renderDOMTree(DOMNode* root, QVBoxLayout* parentLayout, QTabWidget* tabWidg
 
     // parent widget (main window)
     QWidget* mainWindow = parentLayout->parentWidget()->window();
-    // Render the DOM inside the layout passing the main window
-    renderDOMNode(root, domContentLayout, mainWindow, tabWidget);
 
-    // scroll bar
+    // Scroll area setup
     QScrollArea* scrollArea = new QScrollArea();
     scrollArea->setWidgetResizable(true);
     scrollArea->setWidget(domContentWidget);
     parentLayout->addWidget(scrollArea);
+
+    // Start rendering the root node with the layout and main window (single thread)
+    renderDOMNodeParallel(root, domContentLayout, mainWindow, tabWidget);
+}
+
+void renderDOMNodeParallel(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow, QTabWidget* tabWidget) {
+    if (node == nullptr) return;
+
+    // Render the current DOM node (non-parallel)
+    renderDOMNode(node, layout, mainWindow, tabWidget);
+
+    // Parallelize the rendering of child nodes
+    const std::vector<DOMNode*>& children = node->getChildren();
+    for (DOMNode* child : children) {
+#pragma omp task firstprivate(child)
+        {
+            // Each child node gets its own layout in the parent
+            QVBoxLayout* childLayout = new QVBoxLayout();
+            layout->addLayout(childLayout);
+
+            // Recursively render the child nodes in parallel
+            renderDOMNodeParallel(child, childLayout, mainWindow, tabWidget);
+        }
+    }
+#pragma omp taskwait  // Wait for all child nodes to complete rendering before exiting
 }

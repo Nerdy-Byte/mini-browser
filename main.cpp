@@ -9,20 +9,20 @@
 #include <QNetworkReply>
 #include <QLineEdit>
 #include <iostream>
+#include <omp.h>
+#include <QThread>
 
-using namespace std;
+// Forward declarations of functions
+void render_html(DOMNode* root, QTabWidget* tabWidget, int tabIndex, const std::string& titleText, const QString& url);
+void parse_html(const QString& html_content, QTabWidget* tabWidget, int tabIndex, const QString& url);
+void fetch_html(const QString& url, QTabWidget* tabWidget, int tabIndex);
 
-void render_html(DOMNode* root, QTabWidget* tabWidget, const std::string& titleText, const QString& url);
-void parse_html(const QString& html_content, QTabWidget* tabWidget, const QString& url);
-
-// Function to fetch HTML asynchronously
-void fetch_html(const QString& url, QTabWidget* tabWidget) {
+void fetch_html(const QString& url, QTabWidget* tabWidget, int tabIndex) {
     QNetworkAccessManager* manager = new QNetworkAccessManager(tabWidget);
 
-    // Connect network request to handle fetched HTML content
-    QObject::connect(manager, &QNetworkAccessManager::finished, [tabWidget, url](QNetworkReply* reply) {
+    QObject::connect(manager, &QNetworkAccessManager::finished, [tabWidget, url, tabIndex](QNetworkReply* reply) {
         if (reply->error() != QNetworkReply::NoError) {
-            cerr << "Error fetching URL: " << reply->errorString().toStdString() << endl;
+            std::cerr << "Error fetching URL: " << reply->errorString().toStdString() << std::endl;
             reply->deleteLater();
             return;
         }
@@ -30,29 +30,36 @@ void fetch_html(const QString& url, QTabWidget* tabWidget) {
         QString html_content = reply->readAll();
         reply->deleteLater();
 
-        // Call the parse_html function to parse the content
-        parse_html(html_content, tabWidget, url);
+#pragma omp task
+        parse_html(html_content, tabWidget, tabIndex, url);
     });
 
     manager->get(QNetworkRequest(QUrl(url)));
 }
 
-// Function to parse the fetched HTML content
-void parse_html(const QString& html_content, QTabWidget* tabWidget, const QString& url) {
-    DOMNode* root = dom_creater_string(html_content.toStdString());
+void parse_html(const QString& html_content, QTabWidget* tabWidget, int tabIndex, const QString& url) {
+    DOMNode* root = nullptr;
+
+#pragma omp task shared(root)
+    {
+        root = dom_creater_string(html_content.toStdString());
+    }
+
+#pragma omp taskwait
+
     if (!root) return;
 
     std::string titleText = findTitle(root);
 
-    // Call the render_html function to render the parsed DOM content in the tab
-    render_html(root, tabWidget, titleText, url);
+    QMetaObject::invokeMethod(tabWidget, [=]() {
+        render_html(root, tabWidget, tabIndex, titleText, url);
+    });
 }
 
-// Function to render the parsed HTML content in the tab
-void render_html(DOMNode* root, QTabWidget* tabWidget, const std::string& titleText, const QString& url) {
-    QWidget* currentTab = tabWidget->currentWidget();
-    if (currentTab) {
-        QVBoxLayout* tabLayout = qobject_cast<QVBoxLayout*>(currentTab->layout());
+void render_html(DOMNode* root, QTabWidget* tabWidget, int tabIndex, const std::string& titleText, const QString& url) {
+    QWidget* targetTab = tabWidget->widget(tabIndex);
+    if (targetTab) {
+        QVBoxLayout* tabLayout = qobject_cast<QVBoxLayout*>(targetTab->layout());
         if (tabLayout) {
             // Clear the previous content
             QLayoutItem* item;
@@ -60,13 +67,11 @@ void render_html(DOMNode* root, QTabWidget* tabWidget, const std::string& titleT
                 delete item->widget();
                 delete item;
             }
-
-            // Render the new DOM content
             renderDOMTree(root, tabLayout, tabWidget);
 
             // Set the tab name
             QString tabName = QString::fromStdString(titleText.empty() ? "Untitled" : titleText);
-            tabWidget->setTabText(tabWidget->currentIndex(), tabName);
+            tabWidget->setTabText(tabIndex, tabName);
         }
     }
 }
@@ -88,27 +93,33 @@ int main(int argc, char* argv[]) {
     int tabCounter = 1;
 
     QObject::connect(addTabButton, &QPushButton::clicked, [&]() {
+#pragma omp parallel num_threads(2)
+        {
+#pragma omp single
+            {
+                QWidget* newTab = new QWidget();
+                QVBoxLayout* tabLayout = new QVBoxLayout(newTab);
 
-        QWidget* newTab = new QWidget();
-        QVBoxLayout* tabLayout = new QVBoxLayout(newTab);
+                QLineEdit* urlInput = new QLineEdit();
+                urlInput->setPlaceholderText("Enter URL here...");
+                tabLayout->addWidget(urlInput);
 
-        QLineEdit* urlInput = new QLineEdit();
-        urlInput->setPlaceholderText("Enter URL here...");
-        tabLayout->addWidget(urlInput);
+                QPushButton* fetchButton = new QPushButton("Fetch HTML");
+                tabLayout->addWidget(fetchButton);
 
-        QPushButton* fetchButton = new QPushButton("Fetch HTML");
-        tabLayout->addWidget(fetchButton);
+                int currentTabIndex = tabWidget->addTab(newTab, "Tab " + QString::number(tabCounter++));
+                newTab->setLayout(tabLayout);
 
-        QObject::connect(fetchButton, &QPushButton::clicked, [=]() {
-            QString url = urlInput->text();
-            if (!url.isEmpty()) {
-                QString fullUrl = "http://localhost:8000/" + url;
-                fetch_html(fullUrl, tabWidget);  // Fetch HTML
+                QObject::connect(fetchButton, &QPushButton::clicked, [=]() {
+                    QString url = urlInput->text();
+                    if (!url.isEmpty()) {
+                        QString fullUrl = "http://localhost:8000/" + url;
+#pragma omp task
+                        fetch_html(fullUrl, tabWidget, currentTabIndex);
+                    }
+                });
             }
-        });
-
-        newTab->setLayout(tabLayout);
-        tabWidget->addTab(newTab, "Tab " + QString::number(tabCounter++));
+        }
     });
 
     window.show();
