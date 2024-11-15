@@ -80,6 +80,16 @@ int main(int argc, char* argv[]) {
     QTabWidget* tabWidget = new QTabWidget(&window);
     QVBoxLayout* mainLayout = new QVBoxLayout(&window);
 
+    // Enable close buttons on each tab
+    tabWidget->setTabsClosable(true);
+
+    // Connect the close request to remove and delete the tab
+    QObject::connect(tabWidget, &QTabWidget::tabCloseRequested, [tabWidget](int index) {
+        QWidget* tab = tabWidget->widget(index);
+        tabWidget->removeTab(index);
+        delete tab;  // Clean up the memory
+    });
+
     QPushButton* addTabButton = new QPushButton("Add New Tab");
     mainLayout->addWidget(addTabButton);
     mainLayout->addWidget(tabWidget);
