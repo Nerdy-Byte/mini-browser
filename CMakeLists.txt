@@ -24,12 +24,14 @@ find_package(CURL REQUIRED)
 # Find Flex and Bison packages
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
+if(APPLE)
+    include_directories("/opt/homebrew/opt/libomp/include")
+    link_directories("/opt/homebrew/opt/libomp/lib")
+    find_package(OpenMP REQUIRED)
 
-include_directories("/opt/homebrew/opt/libomp/include")
-link_directories("/opt/homebrew/opt/libomp/lib")
-find_package(OpenMP REQUIRED)
-
-
+else()
+    find_package(OpenMP REQUIRED)
+endif()
 
 # Generate parser and lexer from Bison and Flex files
 BISON_TARGET(Parser parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp)
