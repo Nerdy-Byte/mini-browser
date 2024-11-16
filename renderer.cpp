@@ -17,7 +17,19 @@
 #include <QEventLoop>
 
 using namespace std;
-// void renderDOMNodeParallel(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow, QTabWidget* tabWidget);
+
+/**
+ * @brief Finds the title of the webpage within the DOM tree.
+ *
+ * This helper function searches through the DOM tree to find the <title> tag and
+ * returns its content as a string. The search is performed recursively through
+ * the child nodes of the given DOM node.
+ *
+ * @param node A pointer to the current DOM node to start the search.
+ *
+ * @return The content of the <title> tag as a string. If no title tag is found,
+ *         an empty string is returned.
+ */
 
 std::string findTitle(DOMNode* node) {  // helper that finds the title of the webpage
     if (node == nullptr) return "";
@@ -30,6 +42,24 @@ std::string findTitle(DOMNode* node) {  // helper that finds the title of the we
     }
     return "";
 }
+
+
+/**
+ * @brief Recursively renders the DOM tree into a GUI layout.
+ *
+ * This function processes a DOMNode and renders it into a GUI layout using QVBoxLayout.
+ * It handles different tag types (e.g., paragraphs, headers, divs, etc.) and processes
+ * their children recursively. Depending on the tag type, the node is displayed with
+ * appropriate formatting (e.g., paragraphs with text, headers with varying font sizes).
+ * The function also skips rendering certain tags like <title> which are handled separately.
+ *
+ * @param node A pointer to the current DOM node to render.
+ * @param layout A pointer to the QVBoxLayout where the rendered content is added.
+ * @param mainWindow A pointer to the main QWidget window for GUI management.
+ * @param tabWidget A pointer to the QTabWidget, used for managing tabs if applicable.
+ *
+ * @note This function does not return any value and performs the rendering directly to the GUI.
+ */
 
 
 void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow, QTabWidget* tabWidget) {
@@ -475,6 +505,24 @@ void renderDOMNode(DOMNode* node, QVBoxLayout* layout, QWidget* mainWindow, QTab
     }
 }
 
+/**
+ * @brief Renders the entire DOM tree into a GUI layout.
+ *
+ * This function is responsible for rendering the full DOM tree, starting from the root node. It sets up
+ * the necessary widgets and layouts, including a scrollable area for the content. The function begins by
+ * finding the title of the page (if available) and then processes the root DOM node using the `renderDOMNode`
+ * function to render the content into a `QVBoxLayout`.
+ *
+ * The rendered DOM tree is displayed in a scrollable area that is added to the parent layout. The layout is
+ * intended to be used in the main window of the application, and the rendering is done in a single thread.
+ *
+ * @param root A pointer to the root node of the DOM tree to render.
+ * @param parentLayout A pointer to the parent QVBoxLayout where the scrollable content will be added.
+ * @param tabWidget A pointer to the QTabWidget used to manage different content tabs, if applicable.
+ *
+ * @note The function handles the creation of necessary GUI elements (widgets, layouts, scroll area) and starts
+ *       the rendering process for the DOM tree.
+ */
 
 void renderDOMTree(DOMNode* root, QVBoxLayout* parentLayout, QTabWidget* tabWidget) {
     if (root == nullptr) {

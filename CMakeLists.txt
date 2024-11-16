@@ -28,9 +28,6 @@ if(APPLE)
     include_directories("/opt/homebrew/opt/libomp/include")
     link_directories("/opt/homebrew/opt/libomp/lib")
     find_package(OpenMP REQUIRED)
-
-else()
-    find_package(OpenMP REQUIRED)
 endif()
 
 # Generate parser and lexer from Bison and Flex files

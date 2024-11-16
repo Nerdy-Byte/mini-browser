@@ -210,10 +210,10 @@ public:
     }
 
 private:
-    std::string tag;  // Tag name (e.g., "p", "img")
+    std::string tag;  // Tag name
     std::string content;  // Text content of the node
     std::vector<DOMNode*> children;  // Children of this node
-    std::map<std::string, std::string> attributes;  // Attributes (e.g., src for img, href for a)
+    std::map<std::string, std::string> attributes;  // Attributes
 };
 
 typedef std::vector<DOMNode*> DOMNodeList;
