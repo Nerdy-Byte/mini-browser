@@ -5,11 +5,15 @@
 #include <QTabWidget>
 #include <QMetaObject>
 #include <QLineEdit>
+#include <QMap>
 #include <iostream>
 #include <omp.h>
 
 // Forward declarations
 void fetch_and_parse(const QString& url, QTabWidget* tabWidget, int tabIndex);
+
+// Cache to store previously fetched and parsed pages
+QMap<QString, std::pair<DOMNode*, std::string>> pageCache;
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
@@ -58,20 +62,34 @@ int main(int argc, char* argv[]) {
                     if (!url.isEmpty()) {
                         QString fullUrl = "http://localhost:8000/" + url;
 
-                        // Fetch the HTML
-                        HtmlFetcher* fetcher = new HtmlFetcher(fullUrl, tabWidget, currentTabIndex);
-                        QObject::connect(fetcher, &HtmlFetcher::fetchFinished, [=](const QString& content) {
-                            // Parse the HTML
-                            HtmlParser* parser = new HtmlParser(content);
-                            QObject::connect(parser, &HtmlParser::parsingFinished, [=](DOMNode* root, const std::string& titleText) {
-                                // Render the DOM tree
-                                HtmlRenderer* renderer = new HtmlRenderer(tabWidget, currentTabIndex);
-                                renderer->render(root, titleText);
-                            });
-                            parser->parse();
-                        });
+                        // Check if the page is already cached
+                        if (pageCache.contains(fullUrl)) {
+                            std::pair<DOMNode*, std::string> cachedData = pageCache[fullUrl];
+                            DOMNode* cachedRoot = cachedData.first;
+                            std::string cachedTitle = cachedData.second;
 
-                        fetcher->fetch();
+                            // Render the cached content directly
+                            HtmlRenderer* renderer = new HtmlRenderer(tabWidget, currentTabIndex);
+                            renderer->render(cachedRoot, cachedTitle);
+                        } else {
+                            // Fetch the HTML if not cached
+                            HtmlFetcher* fetcher = new HtmlFetcher(fullUrl, tabWidget, currentTabIndex);
+                            QObject::connect(fetcher, &HtmlFetcher::fetchFinished, [=](const QString& content) {
+                                // Parse the HTML
+                                HtmlParser* parser = new HtmlParser(content);
+                                QObject::connect(parser, &HtmlParser::parsingFinished, [=](DOMNode* root, const std::string& titleText) {
+                                    // Cache the parsed result
+                                    pageCache[fullUrl] = std::make_pair(root, titleText);
+
+                                    // Render the DOM tree
+                                    HtmlRenderer* renderer = new HtmlRenderer(tabWidget, currentTabIndex);
+                                    renderer->render(root, titleText);
+                                });
+                                parser->parse();
+                            });
+
+                            fetcher->fetch();
+                        }
                     }
                 });
             }
