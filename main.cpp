@@ -1,4 +1,4 @@
-#include "pages.h"
+#include "dom_creater.h"
 #include <QApplication>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -6,7 +6,6 @@
 #include <QMetaObject>
 #include <QLineEdit>
 #include <QMap>
-#include <iostream>
 #include <omp.h>
 
 // Forward declarations

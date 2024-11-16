@@ -68,7 +68,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         input.html
         renderer.cpp
-        pages.h
+
         lex.l parser.y
 
     )
