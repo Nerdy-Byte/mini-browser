@@ -5,11 +5,13 @@
 #include <QTabWidget>
 #include <QLineEdit>
 #include <QMap>
-#include <future>
+#include <pthread.h>
+#include <queue>
+#include <utility>
 
 /**
  * @file main.cpp
- * @brief Entry point for the DOM Browser application. Implements HTML fetching, parsing, rendering, and tabbed browsing with caching.
+ * @brief Entry point for the DOM Browser application using pthread for concurrency.
  */
 
 /**
@@ -20,62 +22,115 @@
 QMap<QString, std::pair<DOMNode*, std::string>> pageCache;
 
 /**
- * @brief Fetches HTML content from the specified URL.
- *
- * This function performs a synchronous HTTP request to retrieve the HTML content.
- * @param url The URL to fetch content from.
- * @return The fetched HTML content as a `std::string`.
+ * @brief Structure to pass data between threads for fetching and parsing.
  */
-std::string fetchHtmlContent(const QString& url) {
-    HtmlFetcher fetcher(url);
-    return fetcher.fetchSync(); // A synchronous fetch implementation
+struct TaskData {
+    QString url;
+    std::string content;
+    DOMNode* root = nullptr;
+    std::string title;
+    pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t condition = PTHREAD_COND_INITIALIZER;
+    bool isComplete = false;
+};
+
+/**
+ * @brief Thread function for fetching HTML content.
+ *
+ * This function fetches HTML content from the specified URL.
+ * @param arg Pointer to `TaskData` containing the URL and results.
+ * @return nullptr
+ */
+void* fetchHtmlThread(void* arg) {
+    TaskData* data = static_cast<TaskData*>(arg);
+
+    HtmlFetcher fetcher(data->url);
+    std::string content = fetcher.fetchSync();
+
+    pthread_mutex_lock(&data->mutex);
+    data->content = content;
+    pthread_cond_signal(&data->condition);
+    pthread_mutex_unlock(&data->mutex);
+
+    return nullptr;
 }
 
 /**
- * @brief Parses the fetched HTML content into a DOM tree.
+ * @brief Thread function for parsing HTML content.
  *
- * This function performs synchronous parsing of the HTML content and returns the root DOM node and page title.
- * @param content The HTML content to parse.
- * @return A pair containing the root DOM node and the page title.
+ * This function parses HTML content into a DOM tree.
+ * @param arg Pointer to `TaskData` containing HTML content and results.
+ * @return nullptr
  */
-std::pair<DOMNode*, std::string> parseHtmlContent(const std::string& content) {
-    HtmlParser parser(content);
-    return parser.parseSync(); // A synchronous parse implementation returning root node and title
+void* parseHtmlThread(void* arg) {
+    TaskData* data = static_cast<TaskData*>(arg);
+
+    HtmlParser parser(data->content);
+    auto [root, title] = parser.parseSync();
+
+    pthread_mutex_lock(&data->mutex);
+    data->root = root;
+    data->title = title;
+    data->isComplete = true;
+    pthread_cond_signal(&data->condition);
+    pthread_mutex_unlock(&data->mutex);
+
+    return nullptr;
 }
 
 /**
  * @brief Renders HTML content in a browser tab.
  *
- * Fetches and parses the content either from the cache or by making HTTP requests and parsing in parallel.
- * If the content is fetched and parsed successfully, it is rendered in the specified tab.
+ * Fetches and parses the content using pthread and renders it in the specified tab.
  * @param url The URL of the page to render.
  * @param tabWidget The `QTabWidget` containing browser tabs.
  * @param tabIndex The index of the tab to render the content in.
  */
 void renderContent(const QString& url, QTabWidget* tabWidget, int tabIndex) {
-    // Check if the page is already cached (non-parallel)
+    // Check if the page is already cached
     if (pageCache.contains(url)) {
         auto [cachedRoot, cachedTitle] = pageCache[url];
-
-        // Render the cached content
         HtmlRenderer* renderer = new HtmlRenderer(tabWidget, tabIndex);
         renderer->render(cachedRoot, cachedTitle);
         return;
     }
 
-    // Fetch and parse HTML in parallel
-    auto fetchFuture = std::async(std::launch::async, fetchHtmlContent, url);
-    std::string content = fetchFuture.get(); // Wait for fetch to complete
+    // Create shared data for the fetch and parse tasks
+    TaskData taskData;
+    taskData.url = url;
 
-    auto parseFuture = std::async(std::launch::async, parseHtmlContent, content);
-    auto [root, titleText] = parseFuture.get(); // Wait for parse to complete
+    pthread_t fetchThread, parseThread;
 
-    // Cache the parsed result (non-parallel)
-    pageCache[url] = std::make_pair(root, titleText);
+    // Start the fetch thread
+    pthread_create(&fetchThread, nullptr, fetchHtmlThread, &taskData);
 
-    // Render the DOM tree (non-parallel)
+    // Wait for fetch to complete
+    pthread_mutex_lock(&taskData.mutex);
+    while (taskData.content.empty()) {
+        pthread_cond_wait(&taskData.condition, &taskData.mutex);
+    }
+    pthread_mutex_unlock(&taskData.mutex);
+
+    // Start the parse thread
+    pthread_create(&parseThread, nullptr, parseHtmlThread, &taskData);
+
+    // Wait for parse to complete
+    pthread_mutex_lock(&taskData.mutex);
+    while (!taskData.isComplete) {
+        pthread_cond_wait(&taskData.condition, &taskData.mutex);
+    }
+    pthread_mutex_unlock(&taskData.mutex);
+
+    // Cache the result
+    pageCache[url] = std::make_pair(taskData.root, taskData.title);
+
+    // Render the content
     HtmlRenderer* renderer = new HtmlRenderer(tabWidget, tabIndex);
-    renderer->render(root, titleText);
+    renderer->render(taskData.root, taskData.title);
+
+    // Clean up threads
+    pthread_join(fetchThread, nullptr);
+    pthread_join(parseThread, nullptr);
 }
 
 /**
