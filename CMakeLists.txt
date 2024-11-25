@@ -63,7 +63,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(untitled
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        input.html
+
         renderer.cpp
 
         lex.l parser.y
